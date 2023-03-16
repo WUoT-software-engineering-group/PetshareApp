@@ -7,10 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\Domain\Petshare.Domain.csproj" />
     <ProjectReference Include="..\Petshare.Services.Abstract\Petshare.Services.Abstract.csproj" />
   </ItemGroup>
 
