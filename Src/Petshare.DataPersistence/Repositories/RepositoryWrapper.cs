@@ -1,11 +1,12 @@
 ﻿using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
+using Petshare.WebAPI.Data;
 
 namespace Petshare.DataPersistence.Repositories;
 
 public class RepositoryWrapper : IRepositoryWrapper, IDisposable
 {
-    private readonly RepositoryDbContext _repositoryDbContext;
+    private readonly PetshareDbContext _repositoryDbContext;
     private IRepository<Shelter>? _shelterRepository;
 
     public IRepository<Shelter> ShelterRepository
@@ -17,7 +18,7 @@ public class RepositoryWrapper : IRepositoryWrapper, IDisposable
         }
     }
 
-    public RepositoryWrapper(RepositoryDbContext repositoryDbContext)
+    public RepositoryWrapper(PetshareDbContext repositoryDbContext)
     {
         _repositoryDbContext = repositoryDbContext;
     }
