@@ -426,3 +426,4 @@ typings
 # System files
 .DS_Store
 Thumbs.db
+/Src/Petshare.WebAPI/Properties/ServiceDependencies/local
