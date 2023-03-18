@@ -14,15 +14,23 @@ namespace Petshare.DataPersistence.Repositories
             _repositoryDbContext = repositoryDbContext;
         }
 
-        public IQueryable<T> FindAll() => _repositoryDbContext.Set<T>().AsNoTracking();
+        public async Task<IEnumerable<T>> FindAll() => await _repositoryDbContext.Set<T>().ToListAsync();
 
-        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression) =>
-            _repositoryDbContext.Set<T>().Where(expression).AsNoTracking();
+        public async Task<IEnumerable<T>> FindByCondition(Expression<Func<T, bool>> expression) =>
+            await _repositoryDbContext.Set<T>().Where(expression).ToListAsync();
 
-        public void Create(T entity) => _repositoryDbContext.Set<T>().Add(entity);
+        public async Task<T> Create(T entity) => (await _repositoryDbContext.Set<T>().AddAsync(entity)).Entity;
 
-        public void Update(T entity) => _repositoryDbContext.Set<T>().Update(entity);
+        public Task Update(T entity)
+        {
+            _repositoryDbContext.Set<T>().Update(entity);
+            return Task.CompletedTask;
+        }
 
-        public void Delete(T entity) => _repositoryDbContext.Set<T>().Remove(entity);
+        public Task Delete(T entity)
+        {
+            _repositoryDbContext.Set<T>().Remove(entity);
+            return Task.CompletedTask;
+        }
     }
 }
