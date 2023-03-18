@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
+using Petshare.WebAPI.Data;
+
 namespace Petshare.WebAPI;
 
 public class Program
@@ -7,6 +11,12 @@ public class Program
     public static async Task Main(string[] args)
     {
         var webHost = CreateHostBuilder(args).Build();
+        var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddDbContext<PetshareDbContext>(options =>
+        {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+        });
 
         await webHost.RunAsync();
     }
