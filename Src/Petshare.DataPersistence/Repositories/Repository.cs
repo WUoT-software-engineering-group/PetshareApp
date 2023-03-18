@@ -1,14 +1,15 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Petshare.Domain.Repositories.Abstract;
+using Petshare.WebAPI.Data;
 
 namespace Petshare.DataPersistence.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly RepositoryDbContext _repositoryDbContext;
+        private readonly PetshareDbContext _repositoryDbContext;
 
-        public Repository(RepositoryDbContext repositoryDbContext)
+        public Repository(PetshareDbContext repositoryDbContext)
         {
             _repositoryDbContext = repositoryDbContext;
         }
