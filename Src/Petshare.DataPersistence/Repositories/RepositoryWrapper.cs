@@ -22,9 +22,9 @@ public class RepositoryWrapper : IRepositoryWrapper, IDisposable
         _repositoryDbContext = repositoryDbContext;
     }
 
-    public void Save()
+    public async Task Save()
     {
-        _repositoryDbContext.SaveChanges();
+        await _repositoryDbContext.SaveChangesAsync();
     }
 
     private bool _disposed;

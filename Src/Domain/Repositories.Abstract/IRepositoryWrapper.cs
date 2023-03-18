@@ -6,5 +6,5 @@ public interface IRepositoryWrapper
 {
     IRepository<Shelter> ShelterRepository { get; }
 
-    void Save();
+    Task Save();
 }

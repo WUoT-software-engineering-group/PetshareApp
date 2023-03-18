@@ -4,14 +4,14 @@ namespace Petshare.Domain.Repositories.Abstract
 {
     public interface IRepository<T>
     {
-        IQueryable<T> FindAll();
+        Task<IEnumerable<T>> FindAll();
 
-        IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression);
+        Task<IEnumerable<T>> FindByCondition(Expression<Func<T, bool>> expression);
 
-        void Create(T entity);
+        Task<T> Create(T entity);
 
-        void Update(T entity);
+        Task Update(T entity);
 
-        void Delete(T entity);
+        Task Delete(T entity);
     }
 }
