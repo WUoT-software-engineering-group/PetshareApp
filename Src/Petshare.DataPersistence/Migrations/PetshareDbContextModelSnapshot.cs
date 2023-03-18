@@ -87,7 +87,7 @@ namespace Petshare.WebAPI.Migrations
 
                     b.HasIndex("PetID");
 
-                    b.ToTable("Annoucements");
+                    b.ToTable("Annoucements", (string)null);
                 });
 
             modelBuilder.Entity("Petshare.Domain.Entities.Application", b =>
@@ -114,7 +114,7 @@ namespace Petshare.WebAPI.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Applications");
+                    b.ToTable("Applications", (string)null);
                 });
 
             modelBuilder.Entity("Petshare.Domain.Entities.Pet", b =>
@@ -153,7 +153,7 @@ namespace Petshare.WebAPI.Migrations
 
                     b.HasIndex("ShelterID");
 
-                    b.ToTable("Pets");
+                    b.ToTable("Pets", (string)null);
                 });
 
             modelBuilder.Entity("Petshare.Domain.Entities.Report", b =>
@@ -172,7 +172,7 @@ namespace Petshare.WebAPI.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Reports");
+                    b.ToTable("Reports", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Report");
 
@@ -199,7 +199,7 @@ namespace Petshare.WebAPI.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.UseTptMappingStrategy();
                 });
@@ -234,7 +234,7 @@ namespace Petshare.WebAPI.Migrations
                     b.Property<Guid>("ShelterID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.ToTable("Reports", t =>
+                    b.ToTable("Reports", null, t =>
                         {
                             t.Property("ShelterID")
                                 .HasColumnName("ShelterReport_ShelterID");
@@ -353,7 +353,7 @@ namespace Petshare.WebAPI.Migrations
 
             modelBuilder.Entity("Petshare.Domain.Entities.User", b =>
                 {
-                    b.OwnsOne("Petshare.Domain.Entities.Address", "Address", b1 =>
+                    b.OwnsOne("Petshare.Domain.Entities.User.Address#Petshare.Domain.Entities.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("UserID")
                                 .HasColumnType("uniqueidentifier");
@@ -380,20 +380,20 @@ namespace Petshare.WebAPI.Migrations
 
                             b1.HasKey("UserID");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Users", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserID");
                         });
 
-                    b.OwnsOne("Petshare.Domain.Entities.AnnoucementProvider", "AnnoucementProvider", b1 =>
+                    b.OwnsOne("Petshare.Domain.Entities.User.AnnoucementProvider#Petshare.Domain.Entities.AnnoucementProvider", "AnnoucementProvider", b1 =>
                         {
                             b1.Property<Guid>("UserID")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.HasKey("UserID");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Users", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserID");
