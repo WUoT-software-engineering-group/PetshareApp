@@ -19,7 +19,8 @@ namespace Petshare.WebAPI
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<PetshareDbContext>(conf => conf.UseSqlServer(_configurationsManager.DatabaseConnectionString));
+            services.AddDbContext<PetshareDbContext>(conf =>
+                conf.UseLazyLoadingProxies().UseSqlServer(_configurationsManager.DatabaseConnectionString));
 
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
             services.AddScoped<IServiceWrapper, ServiceWrapper>();

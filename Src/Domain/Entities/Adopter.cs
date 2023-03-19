@@ -5,8 +5,8 @@ namespace Petshare.Domain.Entities;
 public class Adopter : User
 {
     [NotMapped]
-    public List<Announcement> FollowedAnnouncements { get; set; } = new List<Announcement>();
+    public virtual List<Announcement> FollowedAnnouncements { get; set; } = new List<Announcement>();
 
     [NotMapped]
-    public List<Announcement> FinalizedAnnouncements { get; set; } = new List<Announcement>();
+    public virtual List<Announcement> FinalizedAnnouncements { get; set; } = new List<Announcement>();
 }

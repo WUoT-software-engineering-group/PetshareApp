@@ -4,7 +4,7 @@ public class Pet
 {
     public Guid ID { get; set; }
 
-    public Shelter Shelter { get; set; } = default!;
+    public virtual Shelter Shelter { get; set; } = default!;
 
     public string Name { get; set; } = default!;
 
