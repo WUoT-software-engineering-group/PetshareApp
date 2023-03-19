@@ -7,16 +7,16 @@ public abstract class User
     public string PhoneNumber { get; private set; }
     public string Email { get; private set; }
     public Address Address { get; private set; }
-    public AnnoucementProvider AnnoucementProvider { get; private set; }
+    public AnnouncementProvider AnnouncementProvider { get; private set; }
 
-    public User(string userName, string phoneNumber, string email, Address address, AnnoucementProvider annoucementProvider)
+    public User(string userName, string phoneNumber, string email, Address address, AnnouncementProvider announcementProvider)
     {
         ID = Guid.NewGuid();
         UserName = userName;
         PhoneNumber = phoneNumber;
         Email = email;
         Address = address;
-        AnnoucementProvider = annoucementProvider;
+        AnnouncementProvider = announcementProvider;
     }
 
     public User() { }

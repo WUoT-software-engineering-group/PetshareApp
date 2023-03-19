@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Petshare.WebAPI.Data;
+using Petshare.DataPersistence;
 
 #nullable disable
 
-namespace Petshare.WebAPI.Migrations
+namespace Petshare.DataPersistence.Migrations
 {
     [DbContext(typeof(PetshareDbContext))]
     [Migration("20230318154736_InitialMigration")]
-    partial class InitialMigration
+    partial class InitialMigration  
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

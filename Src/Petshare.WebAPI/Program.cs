@@ -1,12 +1,11 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
-using Petshare.WebAPI.Data;
+using Petshare.DataPersistence;
 
 namespace Petshare.WebAPI;
 
 public class Program
 {
-    protected Program() { }
+    protected Program() { } 
 
     public static async Task Main(string[] args)
     {
