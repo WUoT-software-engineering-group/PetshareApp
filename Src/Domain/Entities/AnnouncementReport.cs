@@ -2,13 +2,7 @@
 
 public class AnnouncementReport : Report
 {
-    public Guid AnnouncementID { get; private set; }
+    public Guid AnnouncementID { get; set; }
 
-    public Guid ShelterID { get; private set; }
-
-    public AnnouncementReport(Guid announcementID, Guid shelterID, string reason) : base(reason)
-    {
-        AnnouncementID = announcementID;
-        ShelterID = shelterID;
-    }
+    public Guid ShelterID { get; set; }
 }

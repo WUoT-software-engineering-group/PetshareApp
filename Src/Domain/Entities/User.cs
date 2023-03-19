@@ -2,22 +2,15 @@
 
 public abstract class User
 {
-    public Guid ID { get; private set; }
-    public string UserName { get; private set; }
-    public string PhoneNumber { get; private set; }
-    public string Email { get; private set; }
-    public Address Address { get; private set; }
-    public AnnouncementProvider AnnouncementProvider { get; private set; }
+    public Guid ID { get; set; }
 
-    public User(string userName, string phoneNumber, string email, Address address, AnnouncementProvider announcementProvider)
-    {
-        ID = Guid.NewGuid();
-        UserName = userName;
-        PhoneNumber = phoneNumber;
-        Email = email;
-        Address = address;
-        AnnouncementProvider = announcementProvider;
-    }
+    public string UserName { get; set; } = default!;
 
-    public User() { }
+    public string PhoneNumber { get; set; } = default!;
+
+    public string Email { get; set; } = default!;
+
+    public Address Address { get; set; } = default!;
+
+    public AnnouncementProvider AnnouncementProvider { get; set; } = default!;
 }
