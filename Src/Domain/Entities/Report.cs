@@ -2,14 +2,7 @@
 
 public abstract class Report
 {
-    public Guid ID { get; private set; }
-    public string Reason { get; private set; }
+    public Guid ID { get; set; }
 
-    public Report(string reason)
-    {
-        ID = Guid.NewGuid();
-        Reason = reason;
-    }
-
-    public Report() { }
+    public string Reason { get; set; } = default!;
 }

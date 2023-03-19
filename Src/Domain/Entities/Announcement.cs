@@ -9,46 +9,34 @@ public enum AnnouncementStatus
 
 public class Announcement
 {
-    public Guid ID { get; private set; }
-    public Shelter Author { get; private set; }
-    public Pet Pet { get; private set; }
-    public string Title { get; private set; }
-    public string Description { get; private set; }
-    public DateTime CreationDate { get; private set; }
-    public DateTime ClosingDate { get; private set; }
+    public Guid ID { get; set; }
+
+    public Shelter Author { get; set; } = default!;
+
+    public Pet Pet { get; set; } = default!;
+
+    public string Title { get; set; } = default!;
+
+    public string Description { get; set; } = default!;
+
+    public DateTime CreationDate { get; set; }
+
+    public DateTime ClosingDate { get; set; }
+
     public AnnouncementStatus Status { get; set; }
-
-    public Announcement(Shelter author, Pet pet, string title, string description, DateTime creationDate, DateTime closingDate)
-    {
-        ID = Guid.NewGuid();
-        Author = author;
-        Pet = pet;
-        Title = title;
-        Description = description;
-        CreationDate = creationDate;
-        ClosingDate = closingDate;
-        Status = AnnouncementStatus.Open;
-    }
-
-    public Announcement() { }
 }
 
 public abstract class AdopterAnnouncement
 {
-    public Guid AdopterID { get; private set; }
-    public Adopter Adopter { get; private set; }
-    public Guid AnnouncementID { get; private set; }
-    public Announcement Announcement { get; private set; }
+    public Guid AdopterID { get; set; }
 
-    public AdopterAnnouncement() { }
+    public Adopter Adopter { get; set; } = default!;
+
+    public Guid AnnouncementID { get; set; }
+
+    public Announcement Announcement { get; set; } = default!;
 }
 
-public class AdopterAnnouncementFollowed : AdopterAnnouncement
-{
-    public AdopterAnnouncementFollowed() { }
-}
+public class AdopterAnnouncementFollowed : AdopterAnnouncement { }
 
-public class AdopterAnnouncementFinalized : AdopterAnnouncement
-{
-    public AdopterAnnouncementFinalized() { }
-}
+public class AdopterAnnouncementFinalized : AdopterAnnouncement { }
