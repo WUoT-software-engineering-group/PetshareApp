@@ -6,8 +6,8 @@ public class Shelter : User
     public bool IsAuthorized { get; private set; }
     public List<Pet> Pets { get; private set; }
 
-    public Shelter(string fullShelterName, string userName, string phoneNumber, string email, Address address, AnnoucementProvider annoucementProvider)
-        : base(userName, phoneNumber, email, address, annoucementProvider)
+    public Shelter(string fullShelterName, string userName, string phoneNumber, string email, Address address, AnnouncementProvider announcementProvider)
+        : base(userName, phoneNumber, email, address, announcementProvider)
     {
         FullShelterName = fullShelterName;
         IsAuthorized = false;

@@ -3,7 +3,7 @@
 namespace Petshare.Domain.Entities;
 
 [Owned]
-public class AnnoucementProvider
+public class AnnouncementProvider
 {
-    public AnnoucementProvider() { }
+    public AnnouncementProvider() { }
 }

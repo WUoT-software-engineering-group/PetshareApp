@@ -5,15 +5,15 @@ namespace Petshare.Domain.Entities;
 public class Adopter : User
 {
     [NotMapped]
-    public List<Annoucement> FollowedAnnoucements { get; private set; }
+    public List<Announcement> FollowedAnnouncements { get; private set; }
     [NotMapped]
-    public List<Annoucement> FinalisedAnnoucements { get; private set; }
+    public List<Announcement> FinalizedAnnouncements { get; private set; }
 
-    public Adopter(string userName, string phoneNumber, string email, Address address, AnnoucementProvider annoucementProvider)
-        : base(userName, phoneNumber, email, address, annoucementProvider)
+    public Adopter(string userName, string phoneNumber, string email, Address address, AnnouncementProvider announcementProvider)
+        : base(userName, phoneNumber, email, address, announcementProvider)
     {
-        FollowedAnnoucements = new List<Annoucement>();
-        FinalisedAnnoucements = new List<Annoucement>();
+        FollowedAnnouncements = new List<Announcement>();
+        FinalizedAnnouncements = new List<Announcement>();
     }
 
     public Adopter() { }

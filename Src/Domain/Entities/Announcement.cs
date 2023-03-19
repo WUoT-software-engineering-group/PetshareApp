@@ -1,13 +1,13 @@
 ﻿namespace Petshare.Domain.Entities;
 
-public enum AnnoucementStatus
+public enum AnnouncementStatus
 {
     Open,
     Closed,
     Verification
 }
 
-public class Annoucement
+public class Announcement
 {
     public Guid ID { get; private set; }
     public Shelter Author { get; private set; }
@@ -16,9 +16,9 @@ public class Annoucement
     public string Description { get; private set; }
     public DateTime CreationDate { get; private set; }
     public DateTime ClosingDate { get; private set; }
-    public AnnoucementStatus Status { get; set; }
+    public AnnouncementStatus Status { get; set; }
 
-    public Annoucement(Shelter author, Pet pet, string title, string description, DateTime creationDate, DateTime closingDate)
+    public Announcement(Shelter author, Pet pet, string title, string description, DateTime creationDate, DateTime closingDate)
     {
         ID = Guid.NewGuid();
         Author = author;
@@ -27,28 +27,28 @@ public class Annoucement
         Description = description;
         CreationDate = creationDate;
         ClosingDate = closingDate;
-        Status = AnnoucementStatus.Open;
+        Status = AnnouncementStatus.Open;
     }
 
-    public Annoucement() { }
+    public Announcement() { }
 }
 
-public abstract class AdopterAnnoucement
+public abstract class AdopterAnnouncement
 {
     public Guid AdopterID { get; private set; }
     public Adopter Adopter { get; private set; }
-    public Guid AnnoucementID { get; private set; }
-    public Annoucement annoucement { get; private set; }
+    public Guid AnnouncementID { get; private set; }
+    public Announcement Announcement { get; private set; }
 
-    public AdopterAnnoucement() { }
+    public AdopterAnnouncement() { }
 }
 
-public class AdopterAnnoucementFollowed : AdopterAnnoucement
+public class AdopterAnnouncementFollowed : AdopterAnnouncement
 {
-    public AdopterAnnoucementFollowed() { }
+    public AdopterAnnouncementFollowed() { }
 }
 
-public class AdopterAnnoucementFinalised : AdopterAnnoucement
+public class AdopterAnnouncementFinalized : AdopterAnnouncement
 {
-    public AdopterAnnoucementFinalised() { }
+    public AdopterAnnouncementFinalized() { }
 }

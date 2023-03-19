@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace Petshare.WebAPI.Data;
+namespace Petshare.DataPersistence;
 
 public class PetshareDbContextFactory : IDesignTimeDbContextFactory<PetshareDbContext>
 {
     public PetshareDbContext CreateDbContext(string[] args)
     {
-        IConfigurationRoot configuration = new ConfigurationBuilder()
+        var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
             .Build();

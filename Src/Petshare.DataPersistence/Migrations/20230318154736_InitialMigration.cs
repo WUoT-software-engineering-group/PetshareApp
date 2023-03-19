@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Petshare.WebAPI.Migrations
+namespace Petshare.DataPersistence.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration

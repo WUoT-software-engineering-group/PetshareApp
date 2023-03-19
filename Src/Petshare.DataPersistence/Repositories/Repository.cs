@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Petshare.Domain.Repositories.Abstract;
-using Petshare.WebAPI.Data;
 
 namespace Petshare.DataPersistence.Repositories
 {

@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Petshare.Domain.Entities;
 
-namespace Petshare.WebAPI.Data
+namespace Petshare.DataPersistence
 {
     public class PetshareDbContext : DbContext
     {
@@ -14,19 +13,19 @@ namespace Petshare.WebAPI.Data
             modelBuilder.Entity<Shelter>().ToTable("Shelters");
 
             modelBuilder.Entity<AdopterReport>();
-            modelBuilder.Entity<AnnoucementReport>();
+            modelBuilder.Entity<AnnouncementReport>();
             modelBuilder.Entity<ShelterReport>();
 
-            modelBuilder.Entity<AdopterAnnoucementFollowed>().ToTable("FollowedAnnoucements");
-            modelBuilder.Entity<AdopterAnnoucementFollowed>()
-                .HasKey(ad_an => new { ad_an.AdopterID, ad_an.AnnoucementID });
-            modelBuilder.Entity<AdopterAnnoucementFinalised>().ToTable("FinalisedAnnoucements");
-            modelBuilder.Entity<AdopterAnnoucementFinalised>()
-                .HasKey(ad_an => new { ad_an.AdopterID, ad_an.AnnoucementID });
+            modelBuilder.Entity<AdopterAnnouncementFollowed>().ToTable("FollowedAnnouncements");
+            modelBuilder.Entity<AdopterAnnouncementFollowed>()
+                .HasKey(adAn => new { adAn.AdopterID, AnnouncementID = adAn.AnnouncementID });
+            modelBuilder.Entity<AdopterAnnouncementFinalized>().ToTable("FinalizedAnnouncements");
+            modelBuilder.Entity<AdopterAnnouncementFinalized>()
+                .HasKey(adAn => new { adAn.AdopterID, AnnouncementID = adAn.AnnouncementID });
 
             var cascadeFKs = modelBuilder.Model.GetEntityTypes()
                 .SelectMany(t => t.GetForeignKeys())
-                .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
+                .Where(fk => fk is { IsOwnership: false, DeleteBehavior: DeleteBehavior.Cascade });
             foreach (var fk in cascadeFKs)
                 fk.DeleteBehavior = DeleteBehavior.Restrict;
 
@@ -35,8 +34,11 @@ namespace Petshare.WebAPI.Data
         }
 
         public DbSet<Pet> Pets { get; set; }
-        public DbSet<Annoucement> Annoucements { get; set; }
+
+        public DbSet<Announcement> Announcements { get; set; }
+
         public DbSet<Application> Applications { get; set; }
+
         public DbSet<User> Users { get; set; }
 
         public DbSet<Report> Reports { get; set; }
