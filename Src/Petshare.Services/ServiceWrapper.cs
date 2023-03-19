@@ -7,6 +7,7 @@ public class ServiceWrapper : IServiceWrapper
 {
     private readonly IRepositoryWrapper _repositoryWrapper;
     private IShelterService? _shelterService;
+    private IPetService? _petService;
 
     public IShelterService ShelterService
     {
@@ -14,6 +15,15 @@ public class ServiceWrapper : IServiceWrapper
         {
             _shelterService ??= new ShelterService(_repositoryWrapper);
             return _shelterService;
+        }
+    }
+
+    public IPetService PetService
+    {
+        get
+        {
+            _petService ??= new PetService(_repositoryWrapper);
+            return _petService;
         }
     }
 

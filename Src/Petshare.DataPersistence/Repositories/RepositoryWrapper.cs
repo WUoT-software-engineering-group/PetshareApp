@@ -7,6 +7,7 @@ public class RepositoryWrapper : IRepositoryWrapper, IDisposable
 {
     private readonly PetshareDbContext _repositoryDbContext;
     private IRepository<Shelter>? _shelterRepository;
+    private IRepository<Pet>? _petRepository;
 
     public IRepository<Shelter> ShelterRepository
     {
@@ -14,6 +15,15 @@ public class RepositoryWrapper : IRepositoryWrapper, IDisposable
         {
             _shelterRepository ??= new Repository<Shelter>(_repositoryDbContext);
             return _shelterRepository;
+        }
+    }
+
+    public IRepository<Pet> PetRepository
+    {
+        get
+        {
+            _petRepository ??= new Repository<Pet>(_repositoryDbContext);
+            return _petRepository;
         }
     }
 
