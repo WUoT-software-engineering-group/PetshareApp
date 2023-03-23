@@ -1,9 +1,7 @@
-﻿namespace Petshare.CrossCutting.DTO;
+﻿namespace Petshare.CrossCutting.DTO.Address;
 
-public class AddressDTO
+public class AddressResponse
 {
-    public Guid Id { get; set; }
-
     public string Street { get; set; } = default!;
 
     public string City { get; set; } = default!;

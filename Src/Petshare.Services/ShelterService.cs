@@ -1,5 +1,5 @@
 ﻿using Mapster;
-using Petshare.CrossCutting.DTO;
+using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 using Petshare.Services.Abstract;
@@ -16,21 +16,21 @@ namespace Petshare.Services
         }
 
 
-        public async Task<List<ShelterDTO>> GetAll()
+        public async Task<List<ShelterResponse>> GetAll()
         {
             var shelters = await _repositoryWrapper.ShelterRepository.FindAll();
 
-            return shelters.Adapt<List<ShelterDTO>>();
+            return shelters.Adapt<List<ShelterResponse>>();
         }
 
-        public async Task<ShelterDTO?> GetById(Guid id)
+        public async Task<ShelterResponse?> GetById(Guid id)
         {
             var shelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == id)).SingleOrDefault();
 
-            return shelter?.Adapt<ShelterDTO>();
+            return shelter?.Adapt<ShelterResponse>();
         }
 
-        public async Task<ShelterDTO> Create(ShelterDTO shelter)
+        public async Task<ShelterResponse> Create(PostShelterRequest shelter)
         {
             var shelterToCreate = shelter.Adapt<Shelter>();
             shelterToCreate.ID = Guid.NewGuid();
@@ -39,12 +39,12 @@ namespace Petshare.Services
             var createdShelter = await _repositoryWrapper.ShelterRepository.Create(shelterToCreate);
             await _repositoryWrapper.Save();
 
-            return createdShelter.Adapt<ShelterDTO>();
+            return createdShelter.Adapt<ShelterResponse>();
         }
 
-        public async Task<bool> Update(ShelterDTO shelter)
+        public async Task<bool> Update(Guid id, PutShelterRequest shelter)
         {
-            var shelterToUpdate = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == shelter.ID))
+            var shelterToUpdate = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == id))
                 .SingleOrDefault();
 
             if (shelterToUpdate == null)

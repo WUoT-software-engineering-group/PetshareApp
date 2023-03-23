@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Petshare.CrossCutting.DTO;
+using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.Services.Abstract;
 
 namespace Petshare.Presentation.Controllers
@@ -16,7 +16,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ShelterDTO>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ShelterResponse>>> GetAll()
         {
             var shelters = await _serviceWrapper.ShelterService.GetAll();
 
@@ -25,7 +25,7 @@ namespace Petshare.Presentation.Controllers
 
         [HttpGet]
         [Route("{shelterId}")]
-        public async Task<ActionResult<ShelterDTO>> GetById(Guid shelterId)
+        public async Task<ActionResult<ShelterResponse>> GetById(Guid shelterId)
         {
             var shelter = await _serviceWrapper.ShelterService.GetById(shelterId);
             if (shelter == null)
@@ -34,7 +34,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ShelterDTO?>> Create([FromBody] ShelterDTO shelter)
+        public async Task<ActionResult<ShelterResponse?>> Create([FromBody] PostShelterRequest shelter)
         {
             var createdShelter = await _serviceWrapper.ShelterService.Create(shelter);
             return Ok(createdShelter);
@@ -42,11 +42,9 @@ namespace Petshare.Presentation.Controllers
 
         [HttpPut]
         [Route("{shelterId}")]
-        public async Task<ActionResult> Update(Guid shelterId, [FromBody] ShelterDTO shelter)
+        public async Task<ActionResult> Update(Guid shelterId, [FromBody] PutShelterRequest shelter)
         {
-            shelter.ID = shelterId;
-
-            if (!await _serviceWrapper.ShelterService.Update(shelter))
+            if (!await _serviceWrapper.ShelterService.Update(shelterId, shelter))
                 return BadRequest();
 
             return Ok();

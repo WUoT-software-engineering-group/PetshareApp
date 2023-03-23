@@ -1,6 +1,8 @@
-﻿namespace Petshare.CrossCutting.DTO
+﻿using Petshare.CrossCutting.DTO.Address;
+
+namespace Petshare.CrossCutting.DTO.Shelter
 {
-    public class ShelterDTO
+    public class ShelterResponse
     {
         public Guid ID { get; set; }
 
@@ -10,12 +12,10 @@
 
         public string Email { get; set; } = default!;
 
-        public Guid AddressId { get; set; }
-
         public string FullShelterName { get; set; } = default!;
 
         public bool IsAuthorized { get; set; } = false;
 
-        public AddressDTO Address { get; set; } = default!;
+        public AddressResponse Address { get; set; } = default!;
     }
 }
