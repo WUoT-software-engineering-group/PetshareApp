@@ -47,7 +47,7 @@ namespace Petshare.Services.UnitTests
             var shelterService = new ShelterService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await shelterService.GetById(shelterId.ToString());
+            var result = await shelterService.GetById(shelterId);
 
             // Assert
             Assert.NotNull(result);
@@ -66,7 +66,7 @@ namespace Petshare.Services.UnitTests
             var shelterService = new ShelterService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await shelterService.GetById(Guid.NewGuid().ToString());
+            var result = await shelterService.GetById(Guid.NewGuid());
 
             // Assert
             Assert.Null(result);
@@ -107,38 +107,17 @@ namespace Petshare.Services.UnitTests
             var shelterService = new ShelterService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await shelterService.Update(shelterId.ToString(), shelterToUpdate);
+            var result = await shelterService.Update(shelterToUpdate);
 
             // Assert
             Assert.True(result);
         }
 
         [Fact]
-        public async void Update_ReturnsFalseIfIdsDontMatch()
-        {
-            // Arrange
-            var shelterId = Guid.NewGuid();
-            var shelterToUpdate = new ShelterDTO { ID = Guid.NewGuid() };
-
-            var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            repositoryWrapperMock.Setup(r => r.ShelterRepository.FindByCondition(It.IsAny<Expression<Func<Shelter, bool>>>()))
-                .Returns(Task.FromResult(new List<Shelter> { shelterToUpdate.Adapt<Shelter>() }.AsEnumerable()));
-
-            var shelterService = new ShelterService(repositoryWrapperMock.Object);
-
-            // Act
-            var result = await shelterService.Update(shelterId.ToString(), shelterToUpdate);
-
-            // Assert
-            Assert.False(result);
-        }
-
-        [Fact]
         public async void Update_ReturnsFalseIfNotFound()
         {
             // Arrange
-            var shelterId = Guid.NewGuid();
-            var shelterToUpdate = new ShelterDTO { ID = shelterId };
+            var shelterToUpdate = new ShelterDTO { ID = Guid.NewGuid() };
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.ShelterRepository.FindByCondition(It.IsAny<Expression<Func<Shelter, bool>>>()))
@@ -147,7 +126,7 @@ namespace Petshare.Services.UnitTests
             var shelterService = new ShelterService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await shelterService.Update(shelterId.ToString(), shelterToUpdate);
+            var result = await shelterService.Update(shelterToUpdate);
 
             // Assert
             Assert.False(result);

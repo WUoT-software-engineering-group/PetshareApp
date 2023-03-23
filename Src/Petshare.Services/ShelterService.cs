@@ -23,12 +23,9 @@ namespace Petshare.Services
             return shelters.Adapt<List<ShelterDTO>>();
         }
 
-        public async Task<ShelterDTO?> GetById(string id)
+        public async Task<ShelterDTO?> GetById(Guid id)
         {
-            if (!Guid.TryParse(id, out var shelterId))
-                return null;
-
-            var shelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == shelterId)).SingleOrDefault();
+            var shelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == id)).SingleOrDefault();
 
             return shelter?.Adapt<ShelterDTO>();
         }
@@ -45,12 +42,9 @@ namespace Petshare.Services
             return createdShelter.Adapt<ShelterDTO>();
         }
 
-        public async Task<bool> Update(string id, ShelterDTO shelter)
+        public async Task<bool> Update(ShelterDTO shelter)
         {
-            if (!Guid.TryParse(id, out var shelterId) || shelterId != shelter.ID)
-                return false;
-
-            var shelterToUpdate = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == shelterId))
+            var shelterToUpdate = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == shelter.ID))
                 .SingleOrDefault();
 
             if (shelterToUpdate == null)
