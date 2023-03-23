@@ -17,7 +17,7 @@ namespace Petshare.Services.UnitTests
                 new() { ID = Guid.NewGuid() },
                 new() { ID = Guid.NewGuid() },
                 new() { ID = Guid.NewGuid() },
-            };  
+            };
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.ShelterRepository.FindAll()).Returns(Task.FromResult(shelters));
@@ -34,7 +34,7 @@ namespace Petshare.Services.UnitTests
         }
 
         [Fact]
-        public async void GetById_ReturnsShelter()      
+        public async void GetById_ReturnsShelter()
         {
             // Arrange
             var shelterId = Guid.NewGuid();
@@ -42,7 +42,7 @@ namespace Petshare.Services.UnitTests
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.ShelterRepository.FindByCondition(It.IsAny<Expression<Func<Shelter, bool>>>()))
-                .Returns(Task.FromResult(new List<Shelter> { shelter}.AsEnumerable()));
+                .Returns(Task.FromResult(new List<Shelter> { shelter }.AsEnumerable()));
 
             var shelterService = new ShelterService(repositoryWrapperMock.Object);
 
