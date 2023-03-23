@@ -1,4 +1,5 @@
-using Petshare.CrossCutting.DTO;
+using Petshare.CrossCutting.DTO.Address;
+using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 
@@ -29,7 +30,7 @@ namespace Petshare.Services.UnitTests
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<List<ShelterDTO>>(result);
+            Assert.IsType<List<ShelterResponse>>(result);
             Assert.Equal(5, result.Count);
         }
 
@@ -38,7 +39,21 @@ namespace Petshare.Services.UnitTests
         {
             // Arrange
             var shelterId = Guid.NewGuid();
-            var shelter = new Shelter { ID = shelterId };
+            var shelter = new Shelter
+            {
+                ID = shelterId,
+                UserName = "TestShelter",
+                PhoneNumber = "123456789",
+                FullShelterName = "TestShelter",
+                Address = new Address
+                {
+                    Street = "TestStreet",
+                    City = "TestCity",
+                    Province = "TestProvince",
+                    Country = "TestCountry",
+                    PostalCode = "12345"
+                }
+            };
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.ShelterRepository.FindByCondition(It.IsAny<Expression<Func<Shelter, bool>>>()))
@@ -51,8 +66,16 @@ namespace Petshare.Services.UnitTests
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<ShelterDTO>(result);
-            Assert.Equal(shelterId, result.ID);
+            Assert.IsType<ShelterResponse>(result);
+            Assert.Equal(shelter.ID, result.ID);
+            Assert.Equal(shelter.UserName, result.UserName);
+            Assert.Equal(shelter.PhoneNumber, result.PhoneNumber);
+            Assert.Equal(shelter.FullShelterName, result.FullShelterName);
+            Assert.Equal(shelter.Address.Street, result.Address.Street);
+            Assert.Equal(shelter.Address.City, result.Address.City);
+            Assert.Equal(shelter.Address.Province, result.Address.Province);
+            Assert.Equal(shelter.Address.Country, result.Address.Country);
+            Assert.Equal(shelter.Address.PostalCode, result.Address.PostalCode);
         }
 
         [Fact]
@@ -76,7 +99,20 @@ namespace Petshare.Services.UnitTests
         public async void Create_ReturnsCreatedShelter()
         {
             // Arrange
-            var shelterToCreate = new ShelterDTO { ID = Guid.NewGuid() };
+            var shelterToCreate = new PostShelterRequest
+            {
+                UserName = "TestShelter",
+                PhoneNumber = "123456789",
+                FullShelterName = "TestShelter",
+                Address = new AddressRequest
+                {
+                    Street = "TestStreet",
+                    City = "TestCity",
+                    Province = "TestProvince",
+                    Country = "TestCountry",
+                    PostalCode = "12345"
+                }
+            };
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.ShelterRepository.Create(It.IsAny<Shelter>()))
@@ -89,8 +125,15 @@ namespace Petshare.Services.UnitTests
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<ShelterDTO>(result);
-            Assert.Equal(shelterToCreate.ID, result.ID);
+            Assert.IsType<ShelterResponse>(result);
+            Assert.Equal(shelterToCreate.UserName, result.UserName);
+            Assert.Equal(shelterToCreate.PhoneNumber, result.PhoneNumber);
+            Assert.Equal(shelterToCreate.FullShelterName, result.FullShelterName);
+            Assert.Equal(shelterToCreate.Address.Street, result.Address.Street);
+            Assert.Equal(shelterToCreate.Address.City, result.Address.City);
+            Assert.Equal(shelterToCreate.Address.Province, result.Address.Province);
+            Assert.Equal(shelterToCreate.Address.Country, result.Address.Country);
+            Assert.Equal(shelterToCreate.Address.PostalCode, result.Address.PostalCode);
         }
 
         [Fact]
@@ -98,7 +141,7 @@ namespace Petshare.Services.UnitTests
         {
             // Arrange
             var shelterId = Guid.NewGuid();
-            var shelterToUpdate = new ShelterDTO { ID = shelterId };
+            var shelterToUpdate = new PutShelterRequest() { IsAuthorized = true};
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.ShelterRepository.FindByCondition(It.IsAny<Expression<Func<Shelter, bool>>>()))
@@ -107,7 +150,7 @@ namespace Petshare.Services.UnitTests
             var shelterService = new ShelterService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await shelterService.Update(shelterToUpdate);
+            var result = await shelterService.Update(shelterId, shelterToUpdate);
 
             // Assert
             Assert.True(result);
@@ -117,7 +160,8 @@ namespace Petshare.Services.UnitTests
         public async void Update_ReturnsFalseIfNotFound()
         {
             // Arrange
-            var shelterToUpdate = new ShelterDTO { ID = Guid.NewGuid() };
+            var shelterId = Guid.NewGuid();
+            var shelterToUpdate = new PutShelterRequest { IsAuthorized = true };
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.ShelterRepository.FindByCondition(It.IsAny<Expression<Func<Shelter, bool>>>()))
@@ -126,7 +170,7 @@ namespace Petshare.Services.UnitTests
             var shelterService = new ShelterService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await shelterService.Update(shelterToUpdate);
+            var result = await shelterService.Update(shelterId, shelterToUpdate);
 
             // Assert
             Assert.False(result);
