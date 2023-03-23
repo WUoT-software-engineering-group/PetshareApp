@@ -1,6 +1,4 @@
-﻿
-
-using Petshare.CrossCutting.DTO;
+﻿using Petshare.CrossCutting.DTO;
 
 namespace Petshare.Services.Abstract
 {
@@ -8,10 +6,10 @@ namespace Petshare.Services.Abstract
     {
         Task<List<ShelterDTO>> GetAll();
 
-        Task<ShelterDTO?> GetById(string id);
+        Task<ShelterDTO?> GetById(Guid id);
 
         Task<ShelterDTO> Create(ShelterDTO shelter);
 
-        Task<bool> Update(string id, ShelterDTO shelter);
+        Task<bool> Update(ShelterDTO shelter);
     }
 }

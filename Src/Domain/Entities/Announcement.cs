@@ -11,9 +11,9 @@ public class Announcement
 {
     public Guid ID { get; set; }
 
-    public Shelter Author { get; set; } = default!;
+    public virtual Shelter Author { get; set; } = default!;
 
-    public Pet Pet { get; set; } = default!;
+    public virtual Pet Pet { get; set; } = default!;
 
     public string Title { get; set; } = default!;
 
@@ -30,11 +30,11 @@ public abstract class AdopterAnnouncement
 {
     public Guid AdopterID { get; set; }
 
-    public Adopter Adopter { get; set; } = default!;
+    public virtual Adopter Adopter { get; set; } = default!;
 
     public Guid AnnouncementID { get; set; }
 
-    public Announcement Announcement { get; set; } = default!;
+    public virtual Announcement Announcement { get; set; } = default!;
 }
 
 public class AdopterAnnouncementFollowed : AdopterAnnouncement { }

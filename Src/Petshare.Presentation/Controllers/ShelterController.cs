@@ -25,7 +25,7 @@ namespace Petshare.Presentation.Controllers
 
         [HttpGet]
         [Route("{shelterId}")]
-        public async Task<ActionResult<ShelterDTO>> GetById(string shelterId)
+        public async Task<ActionResult<ShelterDTO>> GetById(Guid shelterId)
         {
             var shelter = await _serviceWrapper.ShelterService.GetById(shelterId);
             if (shelter == null)
@@ -42,10 +42,13 @@ namespace Petshare.Presentation.Controllers
 
         [HttpPut]
         [Route("{shelterId}")]
-        public async Task<ActionResult> Update(string shelterId, [FromBody] ShelterDTO shelter)
+        public async Task<ActionResult> Update(Guid shelterId, [FromBody] ShelterDTO shelter)
         {
-            if (!await _serviceWrapper.ShelterService.Update(shelterId, shelter))
+            shelter.ID = shelterId;
+
+            if (!await _serviceWrapper.ShelterService.Update(shelter))
                 return BadRequest();
+
             return Ok();
         }
     }

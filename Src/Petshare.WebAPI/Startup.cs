@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Mapster;
+using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using Petshare.DataPersistence;
 using Petshare.DataPersistence.Repositories;
 using Petshare.Domain.Repositories.Abstract;
@@ -12,17 +14,23 @@ namespace Petshare.WebAPI
     {
         private readonly ConfigurationsManager _configurationsManager;
 
-        public Startup(IConfiguration configuration)    
+        public Startup(IConfiguration configuration)
         {
             _configurationsManager = new ConfigurationsManager(configuration);
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<PetshareDbContext>(conf => conf.UseSqlServer(_configurationsManager.DatabaseConnectionString));
+            services.AddDbContext<PetshareDbContext>(conf =>
+                conf.UseLazyLoadingProxies().UseSqlServer(_configurationsManager.DatabaseConnectionString));
 
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
             services.AddScoped<IServiceWrapper, ServiceWrapper>();
+
+            var mappingConfig = TypeAdapterConfig.GlobalSettings;
+            mappingConfig.Scan(typeof(Services.Mapping.AssemblyReference).Assembly);
+            services.AddSingleton(mappingConfig);
+            services.AddScoped<IMapper, ServiceMapper>();
 
             services.AddControllers()
                 .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);

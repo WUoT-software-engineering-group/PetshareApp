@@ -3,4 +3,5 @@
 public interface IServiceWrapper
 {
     IShelterService ShelterService { get; }
+    IPetService PetService { get; }
 }

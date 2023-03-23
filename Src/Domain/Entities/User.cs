@@ -10,7 +10,7 @@ public abstract class User
 
     public string Email { get; set; } = default!;
 
-    public Address Address { get; set; } = default!;
+    public virtual Address Address { get; set; } = default!;
 
-    public AnnouncementProvider AnnouncementProvider { get; set; } = default!;
+    public virtual AnnouncementProvider AnnouncementProvider { get; set; } = default!;
 }
