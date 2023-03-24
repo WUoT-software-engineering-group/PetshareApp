@@ -1,4 +1,4 @@
-﻿using Petshare.CrossCutting.DTO;
+﻿using Petshare.CrossCutting.DTO.Pet;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 
@@ -6,6 +6,38 @@ namespace Petshare.Services.UnitTests
 {
     public class PetServiceUnitTests
     {
+        [Fact]
+        public async void GetByShelter_ReturnsListOfPetsFromThatShelter()
+        {
+            // Arrange
+            var shelterId = Guid.NewGuid();
+            var properShelter = new Shelter { ID = shelterId };
+
+            IEnumerable<Pet> pets = new List<Pet>
+            {
+                new() { ID = Guid.NewGuid(), Shelter = properShelter },
+                new() { ID = Guid.NewGuid(), Shelter = properShelter },
+                new() { ID = Guid.NewGuid(), Shelter = properShelter },
+                new() { ID = Guid.NewGuid(), Shelter = properShelter },
+                new() { ID = Guid.NewGuid(), Shelter = properShelter },
+            };
+
+            var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+            repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
+                .Returns(Task.FromResult(pets));
+
+            var petService = new PetService(repositoryWrapperMock.Object);
+
+            // Act
+            var result = await petService.GetByShelter(shelterId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.IsType<List<PetResponse>>(result);
+            Assert.Equal(5, result.Count);
+            Assert.True(result.All(x => x.ShelterID == shelterId));
+        }
+
         [Fact]
         public async void GetById_ReturnsPet()
         {
@@ -24,7 +56,7 @@ namespace Petshare.Services.UnitTests
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<PetDTO>(result);
+            Assert.IsType<PetResponse>(result);
             Assert.Equal(petId, result.ID);
         }
 
@@ -51,11 +83,15 @@ namespace Petshare.Services.UnitTests
             // Arrange
             var shelterId = Guid.NewGuid();
             var shelter = new Shelter() { ID = shelterId };
-            var petToCreate = new PetDTO { ID = Guid.NewGuid(), ShelterID = shelterId };
+            var petToCreate = new PostPetRequest();
+
+            var petId = Guid.NewGuid();
+            var createdPet = petToCreate.Adapt<Pet>();
+            createdPet.ID = petId;
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.PetRepository.Create(It.IsAny<Pet>()))
-                .Returns(Task.FromResult(petToCreate.Adapt<Pet>()));
+                .Returns(Task.FromResult(createdPet));
 
             repositoryWrapperMock.Setup(r => r.ShelterRepository.FindByCondition(It.IsAny<Expression<Func<Shelter, bool>>>()))
                 .Returns(Task.FromResult(new List<Shelter> { shelter }.AsEnumerable()));
@@ -63,12 +99,12 @@ namespace Petshare.Services.UnitTests
             var petService = new PetService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await petService.Create(petToCreate);
+            var result = await petService.Create(shelterId, petToCreate);
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<PetDTO>(result);
-            Assert.Equal(petToCreate.ID, result.ID);
+            Assert.IsType<PetResponse>(result);
+            Assert.Equal(petId, result.ID);
         }
 
         [Fact]
@@ -76,45 +112,33 @@ namespace Petshare.Services.UnitTests
         {
             // Arrange
             var petId = Guid.NewGuid();
-            var petToUpdate = new PetDTO { ID = petId };
+            var updateParams = new PutPetRequest();
+
+            var petToUpdate = updateParams.Adapt<Pet>();
+            petToUpdate.ID = petId;
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
-                .Returns(Task.FromResult(new List<Pet> { petToUpdate.Adapt<Pet>() }.AsEnumerable()));
+                .Returns(Task.FromResult(new List<Pet> { petToUpdate }.AsEnumerable()));
 
             var petService = new PetService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await petService.Update(petToUpdate);
+            var result = await petService.Update(petId, updateParams);
 
             // Assert
             Assert.True(result);
         }
 
         [Fact]
-        public async void Update_ReturnsFalseIfIdsDontMatch()
-        {
-            // Arrange
-            var petToUpdate = new PetDTO { ID = Guid.NewGuid() };
-
-            var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
-                .Returns(Task.FromResult(new List<Pet> { }.AsEnumerable()));
-
-            var petService = new PetService(repositoryWrapperMock.Object);
-
-            // Act
-            var result = await petService.Update(petToUpdate);
-
-            // Assert
-            Assert.False(result);
-        }
-
-        [Fact]
         public async void Update_ReturnsFalseIfNotFound()
         {
             // Arrange
-            var petToUpdate = new PetDTO { ID = Guid.NewGuid() };
+            var petId = Guid.NewGuid();
+            var updateParams = new PutPetRequest();
+
+            var petToUpdate = updateParams.Adapt<Pet>();
+            petToUpdate.ID = petId;
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
@@ -123,7 +147,7 @@ namespace Petshare.Services.UnitTests
             var petService = new PetService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await petService.Update(petToUpdate);
+            var result = await petService.Update(petId, updateParams);
 
             // Assert
             Assert.False(result);
