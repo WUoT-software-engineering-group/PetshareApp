@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Petshare.CrossCutting.DTO;
+using Petshare.CrossCutting.DTO.Pet;
 using Petshare.Services.Abstract;
 
 namespace Petshare.Presentation.Controllers
@@ -16,7 +16,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpGet("{petId}")]
-        public async Task<ActionResult<PetDTO>> GetById(Guid petId)
+        public async Task<ActionResult<PetResponse>> GetById(Guid petId)
         {
             var pet = await _serviceWrapper.PetService.GetById(petId);
 
@@ -26,21 +26,22 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpPost()]
-        public async Task<ActionResult<PetDTO>> Create([FromBody] PetDTO pet)
+        public async Task<ActionResult<PetResponse>> Create([FromBody] PostPetRequest pet)
         {
-            var createdPet = await _serviceWrapper.PetService.Create(pet);
+            //var shelterId = // retrieved from roles
+            //var createdPet = await _serviceWrapper.PetService.Create(shelterId, pet);
 
-            return createdPet is null
-                ? BadRequest()
-                : Ok(createdPet);
+            //return createdPet is null
+            //    ? BadRequest()
+            //    : Ok(createdPet);
+
+            return Ok(await Task.FromResult(pet));
         }
 
         [HttpPut("{petId}")]
-        public async Task<ActionResult<PetDTO>> Update(Guid petId, [FromBody] PetDTO pet)
+        public async Task<ActionResult<PetResponse>> Update(Guid petId, [FromBody] PutPetRequest pet)
         {
-            pet.ID = petId;
-
-            var updateSuccessul = await _serviceWrapper.PetService.Update(pet);
+            var updateSuccessul = await _serviceWrapper.PetService.Update(petId, pet);
 
             return !updateSuccessul
                 ? BadRequest()

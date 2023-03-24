@@ -1,5 +1,5 @@
 ﻿using Mapster;
-using Petshare.CrossCutting.DTO;
+using Petshare.CrossCutting.DTO.Pet;
 using Petshare.Domain.Entities;
 
 namespace Petshare.Services.Mapping
@@ -8,7 +8,7 @@ namespace Petshare.Services.Mapping
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<Pet, PetDTO>()
+            config.NewConfig<Pet, PetResponse>()
                 .Map(dest => dest.ShelterID, src => src.Shelter.ID);
         }
     }

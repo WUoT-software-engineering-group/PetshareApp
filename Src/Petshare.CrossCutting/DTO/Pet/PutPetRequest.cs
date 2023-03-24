@@ -1,14 +1,10 @@
 ﻿using Petshare.CrossCutting.Utils;
 using System.Text.Json.Serialization;
 
-namespace Petshare.CrossCutting.DTO
+namespace Petshare.CrossCutting.DTO.Pet
 {
-    public class PetDTO
+    public class PutPetRequest
     {
-        public Guid ID { get; set; }
-
-        public Guid ShelterID { get; set; }
-
         public string Name { get; set; } = default!;
 
         public string Species { get; set; } = default!;
