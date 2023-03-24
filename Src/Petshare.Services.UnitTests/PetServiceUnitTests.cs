@@ -7,6 +7,38 @@ namespace Petshare.Services.UnitTests
     public class PetServiceUnitTests
     {
         [Fact]
+        public async void GetByShelter_ReturnsListOfPetsFromThatShelter()
+        {
+            // Arrange
+            var shelterId = Guid.NewGuid();
+            var properShelter = new Shelter { ID = shelterId };
+
+            IEnumerable<Pet> pets = new List<Pet>
+            {
+                new() { ID = Guid.NewGuid(), Shelter = properShelter },
+                new() { ID = Guid.NewGuid(), Shelter = properShelter },
+                new() { ID = Guid.NewGuid(), Shelter = properShelter },
+                new() { ID = Guid.NewGuid(), Shelter = properShelter },
+                new() { ID = Guid.NewGuid(), Shelter = properShelter },
+            };
+
+            var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+            repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
+                .Returns(Task.FromResult(pets));
+
+            var petService = new PetService(repositoryWrapperMock.Object);
+
+            // Act
+            var result = await petService.GetByShelter(shelterId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.IsType<List<PetResponse>>(result);
+            Assert.Equal(5, result.Count);
+            Assert.True(result.All(x => x.ShelterID == shelterId));
+        }
+
+        [Fact]
         public async void GetById_ReturnsPet()
         {
             // Arrange

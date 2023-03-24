@@ -15,6 +15,17 @@ namespace Petshare.Presentation.Controllers
             _serviceWrapper = serviceWrapper;
         }
 
+        [HttpGet()]
+        public async Task<ActionResult<IEnumerable<PetResponse>>> GetAll()
+        {
+            //var shelterId = // retrieved from roles
+            //var pets = await _serviceWrapper.PetService.GetByShelter(shelterId);
+
+            //return Ok(pets);
+
+            return Ok(await Task.FromResult(new List<PetResponse>()));
+        }
+
         [HttpGet("{petId}")]
         public async Task<ActionResult<PetResponse>> GetById(Guid petId)
         {
