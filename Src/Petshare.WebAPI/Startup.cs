@@ -42,15 +42,15 @@ namespace Petshare.WebAPI
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Petshare");
-                    c.RoutePrefix = string.Empty;
-                });
+                app.UseDeveloperExceptionPage();               
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Petshare");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseHttpsRedirection();
 
