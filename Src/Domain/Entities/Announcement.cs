@@ -1,14 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Petshare.CrossCutting.Enums;
 
 namespace Petshare.Domain.Entities;
-
-public enum AnnouncementStatus
-{
-    Open,
-    Closed,
-    Verification
-}
 
 public class Announcement
 {
