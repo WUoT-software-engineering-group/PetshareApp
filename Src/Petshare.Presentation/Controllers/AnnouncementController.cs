@@ -33,5 +33,17 @@ namespace Petshare.Presentation.Controllers
             //    return BadRequest();
             //return Ok(createdAnnouncement);
         }
+
+        [HttpPut]
+        [Route("{announcementId}")]
+        public async Task<ActionResult> Update(Guid announcementId, [FromBody] PutAnnouncementRequest announcement)
+        {
+            // TODO: Wyciągać userId z tokena, jak ogarniemy autoryzację
+            //return Ok();
+            var userId = Guid.NewGuid();
+            if (!await _serviceWrapper.AnnouncementService.Update(userId, announcementId, announcement))
+                return BadRequest();
+            return Ok();
+        }
     }
 }

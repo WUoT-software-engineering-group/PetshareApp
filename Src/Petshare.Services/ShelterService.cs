@@ -47,7 +47,7 @@ namespace Petshare.Services
             var shelterToUpdate = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == id))
                 .SingleOrDefault();
 
-            if (shelterToUpdate == null)
+            if (shelterToUpdate is null)
                 return false;
 
             shelterToUpdate = shelter.Adapt(shelterToUpdate);

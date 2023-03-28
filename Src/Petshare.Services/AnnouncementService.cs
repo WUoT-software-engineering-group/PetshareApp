@@ -42,7 +42,7 @@ public class AnnouncementService : IAnnouncementService
             var petToCreate = announcement.Pet.Adapt<Pet>();
             petToCreate.ID = Guid.NewGuid();
 
-            var petShelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(x => x.ID == shelterId))
+            var petShelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == shelterId))
                 .SingleOrDefault();
             if (petShelter is null)
                 return null;
@@ -59,6 +59,22 @@ public class AnnouncementService : IAnnouncementService
         await _repositoryWrapper.Save();
 
         return createdAnnouncement.Adapt<AnnouncementResponse>();
+    }
+
+    public async Task<bool> Update(Guid userId, Guid announcementId, PutAnnouncementRequest announcement)
+    {
+        // TODO: dodać weryfikację czy użytkownik ma uprawnienia do edycji ogłoszenia
+        var announcementToUpdate = (await _repositoryWrapper.AnnouncementRepository.FindByCondition(a => a.ID == announcementId))
+            .SingleOrDefault();
+
+        if (announcementToUpdate is null)
+            return false;
+
+        announcementToUpdate = announcement.Adapt(announcementToUpdate);
+        await _repositoryWrapper.AnnouncementRepository.Update(announcementToUpdate);
+        await _repositoryWrapper.Save();
+
+        return true;
     }
 
     public async Task<List<AnnouncementResponse>> GetByFilters(GetAnnouncementsRequest filters)
