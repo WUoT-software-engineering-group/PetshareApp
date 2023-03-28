@@ -1,9 +1,11 @@
 ﻿using Mapster;
 using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.Enums;
+using Petshare.CrossCutting.Utils;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 using Petshare.Services.Abstract;
+using System.Linq.Expressions;
 
 namespace Petshare.Services;
 
@@ -57,5 +59,43 @@ public class AnnouncementService : IAnnouncementService
         await _repositoryWrapper.Save();
 
         return createdAnnouncement.Adapt<AnnouncementResponse>();
+    }
+
+    public async Task<List<AnnouncementResponse>> GetByFilters(GetAnnouncementsRequest filters)
+    {
+        Expression<Func<Announcement, bool>> condition = (Announcement _) => true;
+
+        if (!filters.Breeds.IsNullOrEmpty())
+        {
+            condition = condition.And((Announcement a) => filters.Breeds.Contains(a.Pet.Breed));
+        }
+
+        if (!filters.Species.IsNullOrEmpty())
+        {
+            condition = condition.And((Announcement a) => filters.Species.Contains(a.Pet.Species));
+        }
+
+        if (!filters.Cities.IsNullOrEmpty())
+        {
+            condition = condition.And((Announcement a) => filters.Cities.Contains(a.Pet.Shelter.Address.City));
+        }
+
+        if (!filters.ShelterNames.IsNullOrEmpty())
+        {
+            condition = condition.And((Announcement a) => filters.ShelterNames.Contains(a.Pet.Shelter.FullShelterName));
+        }
+
+        if (filters.MinAge.HasValue)
+        {
+            condition = condition.And((Announcement a) => a.Pet.Birthday.AddYears(filters.MinAge.Value).CompareTo(DateTime.Now) <= 0);
+        }
+
+        if (filters.MaxAge.HasValue)
+        {
+            condition = condition.And((Announcement a) => a.Pet.Birthday.AddYears(filters.MaxAge.Value).CompareTo(DateTime.Now) >= 0);
+        }
+
+        var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(condition);
+        return announcements.Adapt<List<AnnouncementResponse>>();
     }
 }
