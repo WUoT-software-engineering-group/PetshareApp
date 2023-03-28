@@ -11,7 +11,7 @@ public class AnnouncementService : IAnnouncementService
 {
     private readonly IRepositoryWrapper _repositoryWrapper;
 
-    public AnnouncementService(IRepositoryWrapper repositoryWrapper, IPetService petService)
+    public AnnouncementService(IRepositoryWrapper repositoryWrapper)
     {
         _repositoryWrapper = repositoryWrapper;
     }
@@ -31,6 +31,9 @@ public class AnnouncementService : IAnnouncementService
                 return null;
 
             announcementToCreate.Pet = pet;
+            if (shelterId != pet.Shelter.ID)
+                return null;
+            announcementToCreate.Author = pet.Shelter;
         }
         else if (announcement.Pet is not null)
         {
@@ -45,6 +48,7 @@ public class AnnouncementService : IAnnouncementService
             petToCreate.Shelter = petShelter;
 
             announcementToCreate.Pet = petToCreate;
+            announcementToCreate.Author = petShelter;
         }
         else
             return null;

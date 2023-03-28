@@ -46,7 +46,6 @@ namespace Petshare.Presentation.Controllers
         {
             if (!await _serviceWrapper.ShelterService.Update(shelterId, shelter))
                 return BadRequest();
-
             return Ok();
         }
     }
