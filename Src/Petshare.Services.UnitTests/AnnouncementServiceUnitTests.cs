@@ -1,5 +1,6 @@
 ﻿using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.DTO.Pet;
+using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.CrossCutting.Enums;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
@@ -192,5 +193,57 @@ public class AnnouncementServiceUnitTests
 
         // Assert
         Assert.Null(result);
+    }
+
+    [Fact]
+    public async void Update_ReturnsTrueIfUpdated()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var announcementId = Guid.NewGuid();
+        var announcementToUpdate = new PutAnnouncementRequest
+        {
+            Title = "TestTitle",
+            Description = "TestDescription",
+            Status = AnnouncementStatus.Deleted
+        };
+
+        var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        repositoryWrapperMock.Setup(r => r.AnnouncementRepository.FindByCondition(It.IsAny<Expression<Func<Announcement, bool>>>()))
+            .Returns(Task.FromResult(new List<Announcement> { announcementToUpdate.Adapt<Announcement>() }.AsEnumerable()));
+
+        var announcementService = new AnnouncementService(repositoryWrapperMock.Object);
+
+        // Act
+        var result = await announcementService.Update(userId, announcementId, announcementToUpdate);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async void Update_ReturnsFalseIfNotFound()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var announcementId = Guid.NewGuid();
+        var announcementToUpdate = new PutAnnouncementRequest
+        {
+            Title = "TestTitle",
+            Description = "TestDescription",
+            Status = AnnouncementStatus.Deleted
+        };
+
+        var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        repositoryWrapperMock.Setup(r => r.AnnouncementRepository.FindByCondition(It.IsAny<Expression<Func<Announcement, bool>>>()))
+            .Returns(Task.FromResult(new List<Announcement>().AsEnumerable()));
+
+        var announcementService = new AnnouncementService(repositoryWrapperMock.Object);
+
+        // Act
+        var result = await announcementService.Update(userId, announcementId, announcementToUpdate);
+
+        // Assert
+        Assert.False(result);
     }
 }
