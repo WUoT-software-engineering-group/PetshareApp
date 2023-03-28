@@ -15,6 +15,14 @@ namespace Petshare.Presentation.Controllers
             _serviceWrapper = serviceWrapper;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<List<AnnouncementResponse>>> GetByFilters([FromQuery] GetAnnouncementsRequest filters)
+        {
+            var announcements = await _serviceWrapper.AnnouncementService.GetByFilters(filters);
+
+            return Ok(announcements);
+        }
+
         [HttpPost]
         public async Task<ActionResult<AnnouncementResponse>> Create([FromBody] PostAnnouncementRequest announcement)
         {
