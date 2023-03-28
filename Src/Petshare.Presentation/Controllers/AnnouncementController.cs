@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.Services.Abstract;
 
 namespace Petshare.Presentation.Controllers
@@ -12,6 +13,17 @@ namespace Petshare.Presentation.Controllers
         public AnnouncementController(IServiceWrapper serviceWrapper)
         {
             _serviceWrapper = serviceWrapper;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<AnnouncementResponse>> Create([FromBody] PostAnnouncementRequest announcement)
+        {
+            // TODO: Wyciągać shelterId z tokena, jak ogarniemy autoryzację
+            return Ok();
+            //var createdAnnouncement = await _serviceWrapper.AnnouncementService.Create(id, announcement);
+            //if (createdAnnouncement == null)
+            //    return BadRequest();
+            //return Ok(createdAnnouncement);
         }
     }
 }

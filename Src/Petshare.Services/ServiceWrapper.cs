@@ -32,7 +32,7 @@ public class ServiceWrapper : IServiceWrapper
     {
         get
         {
-            _announcementService ??= new AnnouncementService(_repositoryWrapper, PetService);
+            _announcementService ??= new AnnouncementService(_repositoryWrapper);
             return _announcementService;
         }
     }
