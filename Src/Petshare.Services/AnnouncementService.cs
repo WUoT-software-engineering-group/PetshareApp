@@ -1,13 +1,4 @@
-﻿using Mapster;
-using Petshare.CrossCutting.DTO.Announcement;
-using Petshare.CrossCutting.Enums;
-using Petshare.CrossCutting.Utils;
-using Petshare.Domain.Entities;
-using Petshare.Domain.Repositories.Abstract;
-using Petshare.Services.Abstract;
-using System.Linq.Expressions;
-
-namespace Petshare.Services;
+﻿namespace Petshare.Services;
 
 public class AnnouncementService : IAnnouncementService
 {
@@ -75,6 +66,18 @@ public class AnnouncementService : IAnnouncementService
         await _repositoryWrapper.Save();
 
         return true;
+    }
+
+    public async Task<AnnouncementResponse?> GetById(Guid announcementId)
+    {
+        var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.ID == announcementId);
+
+        if (announcements.SingleOrDefault() is not Announcement announcement)
+        {
+            return null;
+        }
+
+        return announcement.Adapt<AnnouncementResponse>();
     }
 
     public async Task<List<AnnouncementResponse>> GetByFilters(GetAnnouncementsRequest filters)

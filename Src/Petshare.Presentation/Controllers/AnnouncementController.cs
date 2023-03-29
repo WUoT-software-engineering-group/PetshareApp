@@ -15,6 +15,19 @@ namespace Petshare.Presentation.Controllers
             _serviceWrapper = serviceWrapper;
         }
 
+        [HttpGet("{announcementId}")]
+        public async Task<ActionResult<AnnouncementResponse>> GetById(Guid announcementId)
+        {
+            var announcement = await _serviceWrapper.AnnouncementService.GetById(announcementId);
+
+            if (announcement is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(announcement);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<AnnouncementResponse>>> GetByFilters([FromQuery] GetAnnouncementsRequest filters)
         {
