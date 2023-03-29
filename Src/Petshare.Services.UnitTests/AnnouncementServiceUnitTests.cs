@@ -1,6 +1,5 @@
 ﻿using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.DTO.Pet;
-using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.CrossCutting.Enums;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
