@@ -1,4 +1,5 @@
 ﻿using Petshare.CrossCutting.DTO.Pet;
+using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.CrossCutting.Enums;
 
 namespace Petshare.CrossCutting.DTO.Announcement;
@@ -20,4 +21,6 @@ public class AnnouncementResponse
     public AnnouncementStatus Status { get; set; }
 
     public PetResponse Pet { get; set; } = default!;
+
+    public ShelterResponse Author { get; set; } = default!;
 }

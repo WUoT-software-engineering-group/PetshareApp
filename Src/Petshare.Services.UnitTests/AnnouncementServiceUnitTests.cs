@@ -1,8 +1,11 @@
 ﻿using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.DTO.Pet;
 using Petshare.CrossCutting.Enums;
+using Petshare.DataPersistence;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
+using Petshare.Services.UnitTests.TestData;
+using Petshare.DataPersistence.Repositories;
 
 namespace Petshare.Services.UnitTests;
 
@@ -244,6 +247,77 @@ public class AnnouncementServiceUnitTests
 
         // Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public async void GetById_ReturnsAnnouncement()
+    {
+        // Arrange
+        var announcementId = Guid.NewGuid();
+        var shelterId = Guid.NewGuid();
+        var announcement = new Announcement
+        {
+            ID = announcementId,
+            Author = new()
+            {
+                ID = shelterId,
+            },
+            ClosingDate = DateTime.Now.AddDays(7),
+            CreationDate = DateTime.Now,
+            Description = "SomeDesc",
+            LastUpdateDate = DateTime.Now,
+            Status = CrossCutting.Enums.AnnouncementStatus.Open,
+            Pet = new()
+            {
+                ID = Guid.NewGuid(),
+                Shelter = new()
+                {
+                    ID = shelterId
+                }
+            },
+            Title = "SomeTitle"
+        };
+
+        var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        repositoryWrapperMock.Setup(r => r.AnnouncementRepository.FindByCondition(It.IsAny<Expression<Func<Announcement, bool>>>()))
+            .Returns(Task.FromResult(new List<Announcement> { announcement }.AsEnumerable()));
+
+        var announcementService = new AnnouncementService(repositoryWrapperMock.Object);
+
+        // Act
+        var result = await announcementService.GetById(announcementId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<AnnouncementResponse>(result);
+        Assert.Equal(announcement.ID, result.ID);
+        Assert.Equal(announcement.ClosingDate, result.ClosingDate);
+        Assert.Equal(announcement.CreationDate, result.CreationDate);
+        Assert.Equal(announcement.Title, result.Title);
+        Assert.Equal(announcement.Description, result.Description);
+        Assert.Equal(announcement.Pet.ID, result.Pet.ID);
+        Assert.Equal(announcement.Author.ID, result.Author.ID);
+        Assert.Equal(announcement.LastUpdateDate, result.LastUpdateDate);
+        Assert.Equal(announcement.Status, result.Status);
+    }
+
+    [Fact]
+    public async void GetById_ReturnsNull()
+    {
+        // Arrange
+        var announcementId = Guid.NewGuid();
+
+        var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        repositoryWrapperMock.Setup(r => r.AnnouncementRepository.FindByCondition(It.IsAny<Expression<Func<Announcement, bool>>>()))
+            .Returns(Task.FromResult(new List<Announcement>().AsEnumerable()));
+
+        var announcementService = new AnnouncementService(repositoryWrapperMock.Object);
+
+        // Act
+        var result = await announcementService.GetById(announcementId);
+
+        // Assert
+        Assert.Null(result);
     }
 
     [Theory]
