@@ -1,4 +1,13 @@
-﻿namespace Petshare.Services;
+﻿using Mapster;
+using Petshare.CrossCutting.DTO.Announcement;
+using Petshare.CrossCutting.Enums;
+using Petshare.Domain.Entities;
+using Petshare.Domain.Repositories.Abstract;
+using Petshare.Services.Abstract;
+using Petshare.CrossCutting.Utils;
+using System.Linq.Expressions;
+
+namespace Petshare.Services;
 
 public class AnnouncementService : IAnnouncementService
 {
