@@ -79,36 +79,36 @@ public class AnnouncementService : IAnnouncementService
 
     public async Task<List<AnnouncementResponse>> GetByFilters(GetAnnouncementsRequest filters)
     {
-        Expression<Func<Announcement, bool>> condition = (Announcement _) => true;
+        Expression<Func<Announcement, bool>> condition = _ => true;
 
         if (!filters.Breeds.IsNullOrEmpty())
         {
-            condition = condition.And((Announcement a) => filters.Breeds.Contains(a.Pet.Breed));
+            condition = condition.And(a => filters.Breeds.Contains(a.Pet.Breed));
         }
 
         if (!filters.Species.IsNullOrEmpty())
         {
-            condition = condition.And((Announcement a) => filters.Species.Contains(a.Pet.Species));
+            condition = condition.And(a => filters.Species.Contains(a.Pet.Species));
         }
 
         if (!filters.Cities.IsNullOrEmpty())
         {
-            condition = condition.And((Announcement a) => filters.Cities.Contains(a.Pet.Shelter.Address.City));
+            condition = condition.And(a => filters.Cities.Contains(a.Pet.Shelter.Address.City));
         }
 
         if (!filters.ShelterNames.IsNullOrEmpty())
         {
-            condition = condition.And((Announcement a) => filters.ShelterNames.Contains(a.Pet.Shelter.FullShelterName));
+            condition = condition.And(a => filters.ShelterNames.Contains(a.Pet.Shelter.FullShelterName));
         }
 
         if (filters.MinAge.HasValue)
         {
-            condition = condition.And((Announcement a) => a.Pet.Birthday.AddYears(filters.MinAge.Value).CompareTo(DateTime.Now) <= 0);
+            condition = condition.And(a => a.Pet.Birthday.AddYears(filters.MinAge.Value).CompareTo(DateTime.Now) <= 0);
         }
 
         if (filters.MaxAge.HasValue)
         {
-            condition = condition.And((Announcement a) => a.Pet.Birthday.AddYears(filters.MaxAge.Value).CompareTo(DateTime.Now) >= 0);
+            condition = condition.And(a => a.Pet.Birthday.AddYears(filters.MaxAge.Value).CompareTo(DateTime.Now) >= 0);
         }
 
         var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(condition);
