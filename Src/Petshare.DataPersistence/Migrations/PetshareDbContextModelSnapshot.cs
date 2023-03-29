@@ -61,7 +61,7 @@ namespace Petshare.DataPersistence.Migrations
                     b.Property<Guid>("AuthorID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("ClosingDate")
+                    b.Property<DateTime?>("ClosingDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreationDate")
@@ -70,6 +70,9 @@ namespace Petshare.DataPersistence.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastUpdateDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("PetID")
                         .HasColumnType("uniqueidentifier");
@@ -87,7 +90,7 @@ namespace Petshare.DataPersistence.Migrations
 
                     b.HasIndex("PetID");
 
-                    b.ToTable("Announcements");
+                    b.ToTable("Announcements", (string)null);
                 });
 
             modelBuilder.Entity("Petshare.Domain.Entities.Application", b =>
@@ -114,7 +117,7 @@ namespace Petshare.DataPersistence.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Applications");
+                    b.ToTable("Applications", (string)null);
                 });
 
             modelBuilder.Entity("Petshare.Domain.Entities.Pet", b =>
@@ -153,7 +156,7 @@ namespace Petshare.DataPersistence.Migrations
 
                     b.HasIndex("ShelterID");
 
-                    b.ToTable("Pets");
+                    b.ToTable("Pets", (string)null);
                 });
 
             modelBuilder.Entity("Petshare.Domain.Entities.Report", b =>
@@ -172,7 +175,7 @@ namespace Petshare.DataPersistence.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Reports");
+                    b.ToTable("Reports", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Report");
 
@@ -199,7 +202,7 @@ namespace Petshare.DataPersistence.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.UseTptMappingStrategy();
                 });
@@ -234,7 +237,7 @@ namespace Petshare.DataPersistence.Migrations
                     b.Property<Guid>("ShelterID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.ToTable("Reports", t =>
+                    b.ToTable("Reports", null, t =>
                         {
                             t.Property("ShelterID")
                                 .HasColumnName("ShelterReport_ShelterID");
@@ -353,7 +356,7 @@ namespace Petshare.DataPersistence.Migrations
 
             modelBuilder.Entity("Petshare.Domain.Entities.User", b =>
                 {
-                    b.OwnsOne("Petshare.Domain.Entities.Address", "Address", b1 =>
+                    b.OwnsOne("Petshare.Domain.Entities.User.Address#Petshare.Domain.Entities.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("UserID")
                                 .HasColumnType("uniqueidentifier");
@@ -380,20 +383,20 @@ namespace Petshare.DataPersistence.Migrations
 
                             b1.HasKey("UserID");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Users", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserID");
                         });
 
-                    b.OwnsOne("Petshare.Domain.Entities.AnnouncementProvider", "AnnouncementProvider", b1 =>
+                    b.OwnsOne("Petshare.Domain.Entities.User.AnnouncementProvider#Petshare.Domain.Entities.AnnouncementProvider", "AnnouncementProvider", b1 =>
                         {
                             b1.Property<Guid>("UserID")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.HasKey("UserID");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Users", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserID");

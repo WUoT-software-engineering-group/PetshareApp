@@ -1,4 +1,7 @@
-﻿namespace Petshare.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Petshare.Domain.Entities;
 
 public enum AnnouncementStatus
 {
@@ -9,6 +12,8 @@ public enum AnnouncementStatus
 
 public class Announcement
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key]
     public Guid ID { get; set; }
 
     public virtual Shelter Author { get; set; } = default!;
@@ -19,10 +24,12 @@ public class Announcement
 
     public string Description { get; set; } = default!;
 
-    public DateTime CreationDate { get; set; }
+    public DateTime CreationDate { get; set; } = DateTime.Now;
 
-    public DateTime ClosingDate { get; set; }
+    public DateTime? ClosingDate { get; set; }
 
+    public DateTime LastUpdateDate { get; set; } = DateTime.Now;
+    
     public AnnouncementStatus Status { get; set; }
 }
 

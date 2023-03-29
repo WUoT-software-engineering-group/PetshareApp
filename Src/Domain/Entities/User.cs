@@ -1,7 +1,12 @@
-﻿namespace Petshare.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Petshare.Domain.Entities;
 
 public abstract class User
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key]
     public Guid ID { get; set; }
 
     public string UserName { get; set; } = default!;
