@@ -21,8 +21,6 @@ public class AnnouncementService : IAnnouncementService
     public async Task<AnnouncementResponse?> Create(Guid shelterId, PostAnnouncementRequest announcement)
     {
         var announcementToCreate = announcement.Adapt<Announcement>();
-        announcementToCreate.ID = Guid.NewGuid();
-        announcementToCreate.CreationDate = announcementToCreate.LastUpdateDate = DateTime.Now;
         announcementToCreate.Status = AnnouncementStatus.Open;
 
         if (announcement.PetId.HasValue)
@@ -40,7 +38,6 @@ public class AnnouncementService : IAnnouncementService
         else if (announcement.Pet is not null)
         {
             var petToCreate = announcement.Pet.Adapt<Pet>();
-            petToCreate.ID = Guid.NewGuid();
 
             var petShelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == shelterId))
                 .SingleOrDefault();

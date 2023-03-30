@@ -64,7 +64,6 @@ public class AnnouncementServiceUnitTests
         };
         var petMock = new Pet
         {
-            ID = Guid.NewGuid(),
             Shelter = shelterMock,
             Name = "Test",
             Description = "Test"
@@ -266,7 +265,7 @@ public class AnnouncementServiceUnitTests
             CreationDate = DateTime.Now,
             Description = "SomeDesc",
             LastUpdateDate = DateTime.Now,
-            Status = CrossCutting.Enums.AnnouncementStatus.Open,
+            Status = AnnouncementStatus.Open,
             Pet = new()
             {
                 ID = Guid.NewGuid(),
