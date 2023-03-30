@@ -32,7 +32,7 @@ namespace Petshare.Presentation.Controllers
             var pet = await _serviceWrapper.PetService.GetById(petId);
 
             return pet is null
-                ? BadRequest()
+                ? NotFound()
                 : Ok(pet);
         }
 
