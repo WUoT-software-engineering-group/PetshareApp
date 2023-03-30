@@ -4,9 +4,12 @@
     {
         public const string SectionName = "Database";
 
-        public string Server { get; set; } = string.Empty;
-        public string DbName { get; set; } = string.Empty;
-        public string Login { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        public string Server { get; set; } = default!;
+
+        public string DbName { get; set; } = default!;
+
+        public string Login { get; set; } = default!;
+
+        public string Password { get; set; } = default!;
     }
 }

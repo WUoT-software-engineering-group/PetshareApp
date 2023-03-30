@@ -5,6 +5,7 @@ namespace Petshare.WebAPI.Configuration;
 public class ConfigurationsManager : IServicesConfiguration
 {
     private readonly DatabaseConfig _databaseConfig;
+    private readonly AuthConfig _authConfig;
 
     public readonly IConfiguration Configuration;
 
@@ -12,6 +13,7 @@ public class ConfigurationsManager : IServicesConfiguration
     {
         Configuration = configuration;
         _databaseConfig = Configuration.GetRequiredSection(DatabaseConfig.SectionName).Get<DatabaseConfig>()!;
+        _authConfig = Configuration.GetRequiredSection(AuthConfig.SectionName).Get<AuthConfig>()!;
     }
 
     public string DatabaseConnectionString =>
@@ -19,4 +21,8 @@ public class ConfigurationsManager : IServicesConfiguration
         "Persist Security Info=False;" +
         $"User ID={_databaseConfig.Login};Password={_databaseConfig.Password};" +
         "MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=15;";
+
+    public string AuthAuthority => _authConfig.Authority;
+
+    public string AuthAudience => _authConfig.Audience;
 }
