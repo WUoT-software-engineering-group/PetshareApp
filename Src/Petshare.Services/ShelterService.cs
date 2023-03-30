@@ -15,26 +15,9 @@ namespace Petshare.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-
-        public async Task<List<ShelterResponse>> GetAll()
-        {
-            var shelters = await _repositoryWrapper.ShelterRepository.FindAll();
-
-            return shelters.Adapt<List<ShelterResponse>>();
-        }
-
-        public async Task<ShelterResponse?> GetById(Guid id)
-        {
-            var shelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == id)).SingleOrDefault();
-
-            return shelter?.Adapt<ShelterResponse>();
-        }
-
         public async Task<ShelterResponse> Create(PostShelterRequest shelter)
         {
             var shelterToCreate = shelter.Adapt<Shelter>();
-            shelterToCreate.ID = Guid.NewGuid();
-            shelterToCreate.IsAuthorized = false;
 
             var createdShelter = await _repositoryWrapper.ShelterRepository.Create(shelterToCreate);
             await _repositoryWrapper.Save();
@@ -55,6 +38,20 @@ namespace Petshare.Services
             await _repositoryWrapper.Save();
 
             return true;
+        }
+
+        public async Task<List<ShelterResponse>> GetAll()
+        {
+            var shelters = await _repositoryWrapper.ShelterRepository.FindAll();
+
+            return shelters.Adapt<List<ShelterResponse>>();
+        }
+
+        public async Task<ShelterResponse?> GetById(Guid id)
+        {
+            var shelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == id)).SingleOrDefault();
+
+            return shelter?.Adapt<ShelterResponse>();
         }
     }
 }
