@@ -1,4 +1,7 @@
-﻿namespace Petshare.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Petshare.Domain.Entities;
 
 public class ShelterReport : Report
 {
