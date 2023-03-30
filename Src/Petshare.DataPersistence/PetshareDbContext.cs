@@ -3,7 +3,7 @@ using Petshare.Domain.Entities;
 
 namespace Petshare.DataPersistence
 {
-    public class PetshareDbContext : DbContext
+    public class PetshareDbContext : DbContext, IPetshareDbContext
     {
         public PetshareDbContext(DbContextOptions<PetshareDbContext> options) : base(options) { }
 
