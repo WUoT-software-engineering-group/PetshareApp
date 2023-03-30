@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.Services.Abstract;
@@ -16,6 +17,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ShelterResponse>>> GetAll()
         {
             var shelters = await _serviceWrapper.ShelterService.GetAll();
@@ -24,6 +26,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{shelterId}")]
         public async Task<ActionResult<ShelterResponse>> GetById(Guid shelterId)
         {
@@ -34,6 +37,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<ShelterResponse?>> Create([FromBody] PostShelterRequest shelter)
         {
             var createdShelter = await _serviceWrapper.ShelterService.Create(shelter);
@@ -41,6 +45,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpPut]
+        [Authorize(Policy = "Admin")]
         [Route("{shelterId}")]
         public async Task<ActionResult> Update(Guid shelterId, [FromBody] PutShelterRequest shelter)
         {
