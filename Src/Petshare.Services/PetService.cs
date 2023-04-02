@@ -53,9 +53,12 @@ namespace Petshare.Services
             return petsByShelter.SingleOrDefault()?.Adapt<PetResponse>();
         }
 
-        public async Task<List<PetResponse>> GetByShelter(Guid shelterId)
+        // TODO: uncomment when auth is added
+        public async Task<List<PetResponse>> GetByShelter(/*Guid shelterId*/)
         {
-            var petsByShelter = await _repositoryWrapper.PetRepository.FindByCondition(x => x.Shelter.ID == shelterId);
+            var petsByShelter = await _repositoryWrapper.PetRepository
+                //.FindByCondition(x => x.Shelter.ID == shelterId);
+                .FindAll();
             return petsByShelter.ToList().Adapt<List<PetResponse>>();
         }
     }
