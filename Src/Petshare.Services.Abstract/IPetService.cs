@@ -10,6 +10,7 @@ namespace Petshare.Services.Abstract
 
         Task<PetResponse?> GetById(Guid petId);
 
-        Task<List<PetResponse>> GetByShelter(Guid shelterId);
+        // TODO: uncomment when auth is added
+        Task<List<PetResponse>> GetByShelter(/*Guid shelterId*/);
     }
 }
