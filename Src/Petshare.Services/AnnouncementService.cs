@@ -35,20 +35,6 @@ public class AnnouncementService : IAnnouncementService
                 return null;
             announcementToCreate.Author = pet.Shelter;
         }
-        else if (announcement.Pet is not null)
-        {
-            var petToCreate = announcement.Pet.Adapt<Pet>();
-
-            var petShelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == shelterId))
-                .SingleOrDefault();
-            if (petShelter is null)
-                return null;
-
-            petToCreate.Shelter = petShelter;
-
-            announcementToCreate.Pet = petToCreate;
-            announcementToCreate.Author = petShelter;
-        }
         else
             return null;
 
