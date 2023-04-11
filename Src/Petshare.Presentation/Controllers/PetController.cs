@@ -21,9 +21,10 @@ namespace Petshare.Presentation.Controllers
             //var shelterId = // retrieved from roles
             //var pets = await _serviceWrapper.PetService.GetByShelter(shelterId);
 
-            //return Ok(pets);
+            // TODO: remove when auth is added
+            var pets = await _serviceWrapper.PetService.GetByShelter();
 
-            return Ok(await Task.FromResult(new List<PetResponse>()));
+            return Ok(pets);
         }
 
         [HttpGet("{petId}")]
@@ -42,11 +43,14 @@ namespace Petshare.Presentation.Controllers
             //var shelterId = // retrieved from roles
             //var createdPet = await _serviceWrapper.PetService.Create(shelterId, pet);
 
-            //return createdPet is null
-            //    ? BadRequest()
-            //    : Ok(createdPet);
+            // TODO: remove when auth is added
+            var shelters = await _serviceWrapper.ShelterService.GetAll();
+            var shelterId = shelters.First().ID;
+            var createdPet = await _serviceWrapper.PetService.Create(shelterId, pet);
 
-            return Ok(await Task.FromResult(pet));
+            return createdPet is null
+                ? BadRequest()
+                : Ok(createdPet);
         }
 
         [HttpPut("{petId}")]
