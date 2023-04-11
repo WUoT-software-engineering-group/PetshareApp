@@ -1,7 +1,4 @@
-﻿using Petshare.CrossCutting.Utils;
-using System.Text.Json.Serialization;
-
-namespace Petshare.CrossCutting.DTO.Pet
+﻿namespace Petshare.CrossCutting.DTO.Pet
 {
     public class PutPetRequest
     {
@@ -14,7 +11,5 @@ namespace Petshare.CrossCutting.DTO.Pet
         public DateTime Birthday { get; set; }
 
         public string Description { get; set; } = default!;
-
-        public string PhotoUri { get; set; } = default!;
     }
 }
