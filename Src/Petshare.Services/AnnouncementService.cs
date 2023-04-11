@@ -72,6 +72,12 @@ public class AnnouncementService : IAnnouncementService
         return announcement.Adapt<AnnouncementResponse>();
     }
 
+    public async Task<List<AnnouncementResponse>> GetByShelter(Guid shelterId)
+    {
+        var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.Pet.Shelter.ID == shelterId);
+        return announcements.Adapt<List<AnnouncementResponse>>();
+    }
+
     public async Task<List<AnnouncementResponse>> GetByFilters(GetAnnouncementsRequest filters)
     {
         Expression<Func<Announcement, bool>> condition = _ => true;

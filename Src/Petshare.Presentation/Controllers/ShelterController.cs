@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.Services.Abstract;
 
@@ -52,6 +53,19 @@ namespace Petshare.Presentation.Controllers
             if (!await _serviceWrapper.ShelterService.Update(shelterId, shelter))
                 return BadRequest();
             return Ok();
+        }
+
+        [HttpGet("announcements")]
+        public async Task<ActionResult<IEnumerable<AnnouncementResponse>>> GetAnnouncements()
+        {
+            // TODO: Retrieve shelterId from auth token
+            // var shelterId = // retrieve from roles
+            var shelters = await _serviceWrapper.ShelterService.GetAll();
+            var shelterId = shelters.First().ID;
+
+            var announcements = await _serviceWrapper.AnnouncementService.GetByShelter(shelterId);
+
+            return Ok(announcements);
         }
     }
 }
