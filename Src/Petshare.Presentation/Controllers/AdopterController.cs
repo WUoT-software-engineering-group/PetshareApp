@@ -15,6 +15,26 @@ public class AdopterController : ControllerBase
         _serviceWrapper = serviceWrapper;
     }
 
+    [HttpGet]
+    // TODO: dodać autoryzację dla admina
+    public async Task<ActionResult<IEnumerable<GetAdopterResponse>>> GetAll()
+    {
+        var adopters = await _serviceWrapper.AdopterService.GetAll();
+
+        return Ok(adopters);
+    }
+
+    [HttpGet]
+    [Route("{adopterId}")]
+    public async Task<ActionResult<GetAdopterResponse>> GetById(Guid adopterId)
+    {
+        // TODO: dodać autoryzację: admin bądź adopter z podanym id
+        var adopter = await _serviceWrapper.AdopterService.GetById(adopterId);
+        if (adopter == null)
+            return NotFound();
+        return Ok(adopter);
+    }
+
     [HttpPost]
     public async Task<ActionResult<Guid>> Create([FromBody] PostAdopterRequest adopter)
     {
