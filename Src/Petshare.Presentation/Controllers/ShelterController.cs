@@ -45,7 +45,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "admin")]
         [Route("{shelterId}")]
         public async Task<ActionResult> Update(Guid shelterId, [FromBody] PutShelterRequest shelter)
         {
