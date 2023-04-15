@@ -1,6 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Mapster;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Petshare.DataPersistence;
 using Petshare.DataPersistence.Repositories;
@@ -40,7 +41,17 @@ namespace Petshare.WebAPI
             services.AddControllers()
                 .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
 
-            services.AddSwaggerGen();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = _configurationsManager.AuthAuthority;
+                options.Audience = _configurationsManager.AuthAudience;
+            });
+
+            services.ConfigureSwaggerGeneration();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
