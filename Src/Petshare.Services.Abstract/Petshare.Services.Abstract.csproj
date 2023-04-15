@@ -10,4 +10,9 @@
     <ProjectReference Include="..\Petshare.CrossCutting\Petshare.CrossCutting.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.2.0" />
+  </ItemGroup>
+
 </Project>

@@ -21,5 +21,5 @@ public class Pet
 
     public string Description { get; set; } = default!;
 
-    public byte[] Photo { get; set; } = default!;
+    public string PhotoUri { get; set; } = default!;
 }

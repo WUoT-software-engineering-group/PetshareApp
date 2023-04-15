@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Petshare.CrossCutting.DTO.Pet;
 using Petshare.Services.Abstract;
 
@@ -56,11 +57,31 @@ namespace Petshare.Presentation.Controllers
         [HttpPut("{petId}")]
         public async Task<ActionResult<PetResponse>> Update(Guid petId, [FromBody] PutPetRequest pet)
         {
-            var updateSuccessul = await _serviceWrapper.PetService.Update(petId, pet);
+            var updateSuccessful = await _serviceWrapper.PetService.Update(petId, pet);
 
-            return !updateSuccessul
+            return !updateSuccessful
                 ? BadRequest()
-                : Ok(updateSuccessul);
+                : Ok(updateSuccessful);
+        }
+
+        [HttpPost("{petId}/photo")]
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<PetResponse>> UploadPhoto(Guid petId, IFormFile photo)
+        {
+            //var shelterId = // retrieved from roles
+            
+            // TODO: remove when auth is added
+            var shelters = await _serviceWrapper.ShelterService.GetAll();
+            var shelterId = shelters.First().ID;
+            //
+
+            string photoUri = await _serviceWrapper.FileService.UploadFile(photo.OpenReadStream(), photo.FileName);
+
+            var updateSuccessful = await _serviceWrapper.PetService.UpdatePhotoUri(petId, shelterId, photoUri);
+            
+            return !updateSuccessful
+                ? BadRequest()
+                : Ok(updateSuccessful);
         }
     }
 }

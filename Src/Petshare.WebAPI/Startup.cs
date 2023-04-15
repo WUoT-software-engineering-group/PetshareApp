@@ -1,4 +1,5 @@
-﻿using Mapster;
+﻿using Azure.Storage.Blobs;
+using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Petshare.DataPersistence;
@@ -24,8 +25,12 @@ namespace Petshare.WebAPI
             services.AddDbContext<PetshareDbContext>(conf =>
                 conf.UseLazyLoadingProxies().UseSqlServer(_configurationsManager.DatabaseConnectionString));
 
+            services.AddSingleton(_ => 
+                new BlobServiceClient(_configurationsManager.BlobStorageConnectionString));
+            
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
             services.AddScoped<IServiceWrapper, ServiceWrapper>();
+            services.AddScoped<IServicesConfiguration, ConfigurationsManager>();
 
             var mappingConfig = TypeAdapterConfig.GlobalSettings;
             mappingConfig.Scan(typeof(Services.Mapping.AssemblyReference).Assembly);
