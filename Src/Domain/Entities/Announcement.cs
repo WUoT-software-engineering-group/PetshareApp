@@ -31,11 +31,7 @@ public abstract class AdopterAnnouncement
 {
     public Guid AdopterID { get; set; }
 
-    public virtual Adopter Adopter { get; set; } = default!;
-
     public Guid AnnouncementID { get; set; }
-
-    public virtual Announcement Announcement { get; set; } = default!;
 }
 
 public class AdopterAnnouncementFollowed : AdopterAnnouncement { }

@@ -18,11 +18,15 @@ namespace Petshare.DataPersistence
 
             modelBuilder.Entity<AdopterAnnouncementFollowed>().ToTable("FollowedAnnouncements");
             modelBuilder.Entity<AdopterAnnouncementFollowed>()
-                .HasKey(adAn => new { adAn.AdopterID, AnnouncementID = adAn.AnnouncementID });
+                .HasKey(adAn => new { adAn.AdopterID, adAn.AnnouncementID });
             modelBuilder.Entity<AdopterAnnouncementFinalized>().ToTable("FinalizedAnnouncements");
             modelBuilder.Entity<AdopterAnnouncementFinalized>()
-                .HasKey(adAn => new { adAn.AdopterID, AnnouncementID = adAn.AnnouncementID });
+                .HasKey(adAn => new { adAn.AdopterID, adAn.AnnouncementID });
 
+            modelBuilder.Entity<ShelterAdopterVerification>().ToTable("VerifiedAdopters");
+            modelBuilder.Entity<ShelterAdopterVerification>()
+                .HasKey(shAd => new { shAd.ShelterID, shAd.AdopterID });
+            
             var cascadeFKs = modelBuilder.Model.GetEntityTypes()
                 .SelectMany(t => t.GetForeignKeys())
                 .Where(fk => fk is { IsOwnership: false, DeleteBehavior: DeleteBehavior.Cascade });
