@@ -5,4 +5,5 @@ public interface IServiceWrapper
     IShelterService ShelterService { get; }
     IPetService PetService { get; }
     IAnnouncementService AnnouncementService { get; }
+    IFileService FileService { get; }
 }

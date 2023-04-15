@@ -1,4 +1,6 @@
-﻿using Mapster;
+﻿using System.Net.Http.Json;
+using Mapster;
+using Microsoft.AspNetCore.Http;
 using Petshare.CrossCutting.DTO.Pet;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
@@ -42,6 +44,21 @@ namespace Petshare.Services
             }
 
             await _repositoryWrapper.PetRepository.Update(pet.Adapt(petToUpdate));
+            await _repositoryWrapper.Save();
+
+            return true;
+        }
+
+        public async Task<bool> UpdatePhotoUri(Guid petId, Guid shelterId, string photoUri)
+        {
+            var petToUpdate = (await _repositoryWrapper.PetRepository.FindByCondition(x => x.ID == petId)).SingleOrDefault();
+            if (petToUpdate is null || petToUpdate.Shelter.ID.CompareTo(shelterId) != 0)
+            {
+                return false;
+            }
+
+            petToUpdate.PhotoUri = photoUri;
+            await _repositoryWrapper.PetRepository.Update(petToUpdate);
             await _repositoryWrapper.Save();
 
             return true;

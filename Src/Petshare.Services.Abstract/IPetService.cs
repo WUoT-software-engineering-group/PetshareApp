@@ -1,4 +1,5 @@
-﻿using Petshare.CrossCutting.DTO.Pet;
+﻿using Microsoft.AspNetCore.Http;
+using Petshare.CrossCutting.DTO.Pet;
 
 namespace Petshare.Services.Abstract
 {
@@ -7,6 +8,8 @@ namespace Petshare.Services.Abstract
         Task<PetResponse?> Create(Guid shelterId, PostPetRequest pet);
 
         Task<bool> Update(Guid petId, PutPetRequest pet);
+
+        Task<bool> UpdatePhotoUri(Guid petId, Guid shelterId, string photoUri);
 
         Task<PetResponse?> GetById(Guid petId);
 

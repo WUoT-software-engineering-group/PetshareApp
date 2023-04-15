@@ -15,7 +15,6 @@ namespace Petshare.CrossCutting.DTO.Pet
 
         public string Description { get; set; } = default!;
 
-        [JsonConverter(typeof(StringToByteArrayConverter))]
-        public byte[] Photo { get; set; } = default!;
+        public string PhotoUri { get; set; } = default!;
     }
 }
