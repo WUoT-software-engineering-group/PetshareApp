@@ -10,6 +10,7 @@ public class ServiceWrapper : IServiceWrapper
     private IShelterService? _shelterService;
     private IPetService? _petService;
     private IAnnouncementService? _announcementService;
+    private IAdopterService? _adopterService;
     private readonly Lazy<IFileService> _lazyFileService;
 
     public IShelterService ShelterService
@@ -36,6 +37,15 @@ public class ServiceWrapper : IServiceWrapper
         {
             _announcementService ??= new AnnouncementService(_repositoryWrapper);
             return _announcementService;
+        }
+    }
+
+    public IAdopterService AdopterService
+    {
+        get
+        {
+            _adopterService ??= new AdopterService(_repositoryWrapper);
+            return _adopterService;
         }
     }
 

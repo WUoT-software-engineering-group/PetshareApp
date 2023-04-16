@@ -11,5 +11,5 @@ public class Adopter : User
     [NotMapped]
     public virtual List<Announcement> FinalizedAnnouncements { get; set; } = new List<Announcement>();
     
-    public AdopterStatus Status { get; set; }
+    public AdopterStatus Status { get; set; } = AdopterStatus.Active;
 }
