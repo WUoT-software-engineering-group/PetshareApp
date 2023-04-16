@@ -49,7 +49,6 @@ public class ServiceWrapper : IServiceWrapper
         }
     }
 
-    public ServiceWrapper(IRepositoryWrapper repositoryWrapper)
     public IFileService FileService => _lazyFileService.Value;
 
     public ServiceWrapper(IRepositoryWrapper repositoryWrapper, BlobServiceClient blobService, IServicesConfiguration configuration)
