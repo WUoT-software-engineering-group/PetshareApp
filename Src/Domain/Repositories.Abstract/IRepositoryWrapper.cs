@@ -12,5 +12,7 @@ public interface IRepositoryWrapper
 
     IRepository<Adopter> AdopterRepository { get; }
 
+    IRepository<ShelterAdopterVerification> ShelterAdopterVerificationRepository { get; }
+
     Task Save();
 }
