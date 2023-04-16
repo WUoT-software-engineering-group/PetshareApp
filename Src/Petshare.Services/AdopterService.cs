@@ -31,7 +31,6 @@ public class AdopterService : IAdopterService
     public async Task<Guid> Create(PostAdopterRequest adopterRequest)
     {
         var adopterToCreate = adopterRequest.Adapt<Adopter>();
-        // TODO: Ustawić domyślny status, jak już będzie w bazie
 
         var createdAdopter = await _repositoryWrapper.AdopterRepository.Create(adopterToCreate);
         await _repositoryWrapper.Save();
