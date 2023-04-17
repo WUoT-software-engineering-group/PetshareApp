@@ -142,6 +142,9 @@ namespace Petshare.Services.UnitTests
         public async void GetById_ReturnsNullIfNotFound()
         {
             // Arrange
+            var petId = Guid.NewGuid();
+            var pet = new Pet { ID = petId };
+            
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
                 .Returns(Task.FromResult(new List<Pet>().AsEnumerable()));
@@ -153,6 +156,27 @@ namespace Petshare.Services.UnitTests
 
             // Assert
             Assert.Null(result);
+        }
+
+        [Fact]
+        public async void UpdatePhotoUri_UpdatesPetPhoto()
+        {
+            // Arrange
+            var petId = Guid.NewGuid();
+            var shelterId = Guid.NewGuid();
+            var pet = new Pet { ID = petId, Shelter = new Shelter {ID = shelterId}};
+
+            var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+            repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
+                .Returns(Task.FromResult(new List<Pet> { pet }.AsEnumerable()));
+
+            var petService = new PetService(repositoryWrapperMock.Object);
+            
+            // Act
+            var result = await petService.UpdatePhotoUri(petId, shelterId, "testUri");
+            
+            // Assert
+            Assert.True(result);
         }
     }
 }
