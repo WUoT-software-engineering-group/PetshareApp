@@ -157,7 +157,8 @@ public class AnnouncementServiceUnitTests
         // Arrange
         var userId = Guid.NewGuid();
         var announcementId = Guid.NewGuid();
-        var announcementToUpdate = new PutAnnouncementRequest
+        var announcementToUpdate = new Announcement { Author = new Shelter { ID = userId } };
+        var announcementToUpdateRequest = new PutAnnouncementRequest
         {
             Title = "TestTitle",
             Description = "TestDescription",
@@ -166,15 +167,45 @@ public class AnnouncementServiceUnitTests
 
         var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
         repositoryWrapperMock.Setup(r => r.AnnouncementRepository.FindByCondition(It.IsAny<Expression<Func<Announcement, bool>>>()))
-            .Returns(Task.FromResult(new List<Announcement> { announcementToUpdate.Adapt<Announcement>() }.AsEnumerable()));
+            .Returns(Task.FromResult(new List<Announcement> { announcementToUpdate }.AsEnumerable()));
 
         var announcementService = new AnnouncementService(repositoryWrapperMock.Object);
 
         // Act
-        var result = await announcementService.Update(userId, announcementId, announcementToUpdate);
+        var result = 
+            await announcementService.Update(userId, "admin", announcementId, announcementToUpdateRequest)
+            &&
+            await announcementService.Update(userId, "shelter", announcementId, announcementToUpdateRequest);
 
         // Assert
         Assert.True(result);
+    }
+    
+    [Fact]
+    public async void Update_ReturnsFalseIfShelterIsNotAuthor()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var announcementId = Guid.NewGuid();
+        var announcementToUpdate = new Announcement { Author = new Shelter { ID = Guid.NewGuid() } };
+        var announcementToUpdateRequest = new PutAnnouncementRequest
+        {
+            Title = "TestTitle",
+            Description = "TestDescription",
+            Status = AnnouncementStatus.Deleted
+        };
+
+        var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        repositoryWrapperMock.Setup(r => r.AnnouncementRepository.FindByCondition(It.IsAny<Expression<Func<Announcement, bool>>>()))
+            .Returns(Task.FromResult(new List<Announcement> { announcementToUpdate }.AsEnumerable()));
+
+        var announcementService = new AnnouncementService(repositoryWrapperMock.Object);
+
+        // Act
+        var result = await announcementService.Update(userId, "shelter", announcementId, announcementToUpdateRequest);
+
+        // Assert
+        Assert.False(result);
     }
 
     [Fact]
@@ -197,7 +228,7 @@ public class AnnouncementServiceUnitTests
         var announcementService = new AnnouncementService(repositoryWrapperMock.Object);
 
         // Act
-        var result = await announcementService.Update(userId, announcementId, announcementToUpdate);
+        var result = await announcementService.Update(userId, "shelter", announcementId, announcementToUpdate);
 
         // Assert
         Assert.False(result);
