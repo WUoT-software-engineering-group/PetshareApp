@@ -12,7 +12,7 @@ namespace Petshare.Services.UnitTests;
 public class AnnouncementServiceUnitTests
 {
     [Fact]
-    public async Task Create_ReturnsCreatedAnnouncementIdIfPetIdGiven()
+    public async Task Create_ReturnsCreatedAnnouncement()
     {
         // Arrange
         var shelterMock = new Shelter
@@ -52,7 +52,7 @@ public class AnnouncementServiceUnitTests
     }
 
     [Fact]
-    public async Task Create_ReturnsNullIfPetIdGivenAndPetNotFound()
+    public async Task Create_ReturnsNullIfPetNotFound()
     {
         // Arrange
         var shelterMock = new Shelter
@@ -81,7 +81,7 @@ public class AnnouncementServiceUnitTests
     }
 
     [Fact]
-    public async Task Create_ReturnsNullIfPetIdGivenAndShelterIdsDontMatch()
+    public async Task Create_ReturnsNullIfPetShelterIdAndGivenShelterIdDontMatch()
     {
         // Arrange
         var shelterMock = new Shelter
@@ -118,7 +118,7 @@ public class AnnouncementServiceUnitTests
     }
 
     [Fact]
-    public async Task Create_ReturnsNullIfPetIdGivenAndShelterNotFound()
+    public async Task Create_ReturnsNullIfGivenAndShelterNotFound()
     {
         // Arrange
         var announcementToCreate = new PostAnnouncementRequest
@@ -127,9 +127,18 @@ public class AnnouncementServiceUnitTests
             Description = "Test Announcement Description",
             PetId = Guid.NewGuid(),
         };
+        var petMock = new Pet
+        {
+            ID = Guid.NewGuid(),
+            Shelter = new()
+            {
+                ID = Guid.NewGuid()
+            }
+        };
 
         var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-
+        repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
+            .Returns(Task.FromResult(new List<Pet> { petMock }.AsEnumerable()));
         repositoryWrapperMock.Setup(r => r.ShelterRepository.FindByCondition(It.IsAny<Expression<Func<Shelter, bool>>>()))
             .Returns(Task.FromResult(new List<Shelter>().AsEnumerable()));
 

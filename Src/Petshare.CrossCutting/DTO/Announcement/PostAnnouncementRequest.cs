@@ -6,5 +6,5 @@ public class PostAnnouncementRequest
 
     public string Description { get; set; } = default!;
 
-    public Guid? PetId { get; set; }
+    public Guid PetId { get; set; }
 }

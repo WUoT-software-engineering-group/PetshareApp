@@ -23,20 +23,13 @@ public class AnnouncementService : IAnnouncementService
         var announcementToCreate = announcement.Adapt<Announcement>();
         announcementToCreate.Status = AnnouncementStatus.Open;
 
-        if (announcement.PetId.HasValue)
-        {
-            var pet = (await _repositoryWrapper.PetRepository.FindByCondition(p => p.ID == announcement.PetId))
-                .SingleOrDefault();
-            if (pet == null)
-                return null;
-
-            announcementToCreate.Pet = pet;
-            if (shelterId != pet.Shelter.ID)
-                return null;
-            announcementToCreate.Author = pet.Shelter;
-        }
-        else
+        var pet = (await _repositoryWrapper.PetRepository.FindByCondition(p => p.ID == announcement.PetId))
+            .SingleOrDefault();
+        if (pet == null || shelterId != pet.Shelter.ID)
             return null;
+
+        announcementToCreate.Pet = pet;
+        announcementToCreate.Author = pet.Shelter;
 
         var createdAnnouncement = await _repositoryWrapper.AnnouncementRepository.Create(announcementToCreate);
         await _repositoryWrapper.Save();
