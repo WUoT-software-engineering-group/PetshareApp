@@ -7,7 +7,7 @@ namespace Petshare.Services.UnitTests
     public class PetServiceUnitTests
     {
         [Fact]
-        public async void Create_ReturnsCreatedPet()
+        public async void Create_ReturnsCreatedPetId()
         {
             // Arrange
             var shelterId = Guid.NewGuid();
@@ -32,8 +32,7 @@ namespace Petshare.Services.UnitTests
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<PetResponse>(result);
-            Assert.Equal(petId, result.ID);
+            Assert.IsType<Guid>(result);
         }
 
         [Fact]

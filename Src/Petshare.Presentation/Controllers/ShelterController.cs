@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Petshare.CrossCutting.DTO.Announcement;
+using Petshare.CrossCutting.DTO.Pet;
 using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.Services.Abstract;
 
@@ -38,10 +40,10 @@ namespace Petshare.Presentation.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<ShelterResponse?>> Create([FromBody] PostShelterRequest shelter)
+        public async Task<ActionResult> Create([FromBody] PostShelterRequest shelter)
         {
-            var createdShelter = await _serviceWrapper.ShelterService.Create(shelter);
-            return Ok(createdShelter);
+            var createdShelterId = await _serviceWrapper.ShelterService.Create(shelter);
+            return Created(createdShelterId.ToString(), null);
         }
 
         [HttpPut]
@@ -52,6 +54,31 @@ namespace Petshare.Presentation.Controllers
             if (!await _serviceWrapper.ShelterService.Update(shelterId, shelter))
                 return BadRequest();
             return Ok();
+        }
+
+        [HttpGet("pets")]
+        public async Task<ActionResult<IEnumerable<PetResponse>>> GetPets()
+        {
+            //var shelterId = // retrieved from roles
+            //var pets = await _serviceWrapper.PetService.GetByShelter(shelterId);
+
+            // TODO: remove when auth is added
+            var pets = await _serviceWrapper.PetService.GetByShelter();
+
+            return Ok(pets);
+        }
+
+        [HttpGet("announcements")]
+        public async Task<ActionResult<IEnumerable<AnnouncementResponse>>> GetAnnouncements()
+        {
+            // TODO: Retrieve shelterId from auth token
+            // var shelterId = // retrieve from roles
+            var shelters = await _serviceWrapper.ShelterService.GetAll();
+            var shelterId = shelters.First().ID;
+
+            var announcements = await _serviceWrapper.AnnouncementService.GetByShelter(shelterId);
+
+            return Ok(announcements);
         }
     }
 }

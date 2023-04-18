@@ -37,7 +37,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AnnouncementResponse>> Create([FromBody] PostAnnouncementRequest announcement)
+        public async Task<ActionResult> Create([FromBody] PostAnnouncementRequest announcement)
         {
             // TODO: Wyciągać shelterId z tokena, jak ogarniemy autoryzację
             // var shelterId = // retrieve from roles
@@ -45,11 +45,11 @@ namespace Petshare.Presentation.Controllers
 
             var shelters = await _serviceWrapper.ShelterService.GetAll();
             var shelterId = shelters.First().ID;
-            var createdAnnouncement = await _serviceWrapper.AnnouncementService.Create(shelterId, announcement);
+            var createdAnnouncementId = await _serviceWrapper.AnnouncementService.Create(shelterId, announcement);
 
-            if (createdAnnouncement == null)
+            if (createdAnnouncementId == null)
                 return BadRequest();
-            return Ok(createdAnnouncement);
+            return Created(createdAnnouncementId.ToString(), null);
         }
 
         [HttpPut]

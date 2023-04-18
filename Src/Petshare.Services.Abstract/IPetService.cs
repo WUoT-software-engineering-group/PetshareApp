@@ -5,7 +5,7 @@ namespace Petshare.Services.Abstract
 {
     public interface IPetService
     {
-        Task<PetResponse?> Create(Guid shelterId, PostPetRequest pet);
+        Task<Guid?> Create(Guid shelterId, PostPetRequest pet);
 
         Task<bool> Update(Guid petId, PutPetRequest pet);
 

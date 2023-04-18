@@ -1,6 +1,4 @@
-﻿using Petshare.CrossCutting.DTO.Pet;
-
-namespace Petshare.CrossCutting.DTO.Announcement;
+﻿namespace Petshare.CrossCutting.DTO.Announcement;
 
 public class PostAnnouncementRequest
 {
@@ -8,7 +6,5 @@ public class PostAnnouncementRequest
 
     public string Description { get; set; } = default!;
 
-    public Guid? PetId { get; set; }
-
-    public PostPetRequest? Pet { get; set; }
+    public Guid PetId { get; set; }
 }

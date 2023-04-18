@@ -15,14 +15,14 @@ namespace Petshare.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<ShelterResponse> Create(PostShelterRequest shelter)
+        public async Task<Guid> Create(PostShelterRequest shelter)
         {
             var shelterToCreate = shelter.Adapt<Shelter>();
 
             var createdShelter = await _repositoryWrapper.ShelterRepository.Create(shelterToCreate);
             await _repositoryWrapper.Save();
 
-            return createdShelter.Adapt<ShelterResponse>();
+            return createdShelter.ID;
         }
 
         public async Task<bool> Update(Guid id, PutShelterRequest shelter)
