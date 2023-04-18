@@ -4,7 +4,7 @@ namespace Petshare.Services.Abstract;
 
 public interface IAnnouncementService
 {
-    Task<AnnouncementResponse?> Create(Guid shelterId, PostAnnouncementRequest announcement);
+    Task<Guid?> Create(Guid shelterId, PostAnnouncementRequest announcement);
 
     Task<bool> Update(Guid userId, Guid announcementId, PutAnnouncementRequest announcement);
 

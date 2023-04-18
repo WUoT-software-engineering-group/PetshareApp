@@ -40,10 +40,10 @@ namespace Petshare.Presentation.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<ShelterResponse?>> Create([FromBody] PostShelterRequest shelter)
+        public async Task<ActionResult> Create([FromBody] PostShelterRequest shelter)
         {
-            var createdShelter = await _serviceWrapper.ShelterService.Create(shelter);
-            return Ok(createdShelter);
+            var createdShelterId = await _serviceWrapper.ShelterService.Create(shelter);
+            return Created(createdShelterId.ToString(), null);
         }
 
         [HttpPut]

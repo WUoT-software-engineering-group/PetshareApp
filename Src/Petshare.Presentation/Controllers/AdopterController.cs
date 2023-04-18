@@ -44,11 +44,11 @@ public class AdopterController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult<Guid>> Create([FromBody] PostAdopterRequest adopter)
+    public async Task<ActionResult> Create([FromBody] PostAdopterRequest adopter)
     {
         var createdAdopterId = await _serviceWrapper.AdopterService.Create(adopter);
 
-        return Ok(createdAdopterId);
+        return Created(createdAdopterId.ToString(), null);
     }
 
     [HttpPut]

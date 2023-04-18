@@ -26,8 +26,8 @@ namespace Petshare.Presentation.Controllers
                 : Ok(pet);
         }
 
-        [HttpPost()]
-        public async Task<ActionResult<PetResponse>> Create([FromBody] PostPetRequest pet)
+        [HttpPost]
+        public async Task<ActionResult> Create([FromBody] PostPetRequest pet)
         {
             //var shelterId = // retrieved from roles
             //var createdPet = await _serviceWrapper.PetService.Create(shelterId, pet);
@@ -35,11 +35,11 @@ namespace Petshare.Presentation.Controllers
             // TODO: remove when auth is added
             var shelters = await _serviceWrapper.ShelterService.GetAll();
             var shelterId = shelters.First().ID;
-            var createdPet = await _serviceWrapper.PetService.Create(shelterId, pet);
+            var createdPetId = await _serviceWrapper.PetService.Create(shelterId, pet);
 
-            return createdPet is null
+            return createdPetId is null
                 ? BadRequest()
-                : Ok(createdPet);
+                : Created(createdPetId.ToString(), null);
         }
 
         [HttpPut("{petId}")]

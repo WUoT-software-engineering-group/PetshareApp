@@ -17,7 +17,7 @@ namespace Petshare.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<PetResponse?> Create(Guid shelterId, PostPetRequest pet)
+        public async Task<Guid?> Create(Guid shelterId, PostPetRequest pet)
         {
             var petToCreate = pet.Adapt<Pet>();
 
@@ -32,7 +32,7 @@ namespace Petshare.Services
             var createdPet = await _repositoryWrapper.PetRepository.Create(petToCreate);
             await _repositoryWrapper.Save();
 
-            return createdPet?.Adapt<PetResponse>();
+            return createdPet.ID;
         }
 
         public async Task<bool> Update(Guid petId, PutPetRequest pet)

@@ -4,7 +4,7 @@ namespace Petshare.Services.Abstract
 {
     public interface IShelterService
     {
-        Task<ShelterResponse> Create(PostShelterRequest shelter);
+        Task<Guid> Create(PostShelterRequest shelter);
 
         Task<bool> Update(Guid id, PutShelterRequest shelter);
 

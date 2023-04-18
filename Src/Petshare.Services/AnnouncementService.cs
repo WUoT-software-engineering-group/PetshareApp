@@ -18,7 +18,7 @@ public class AnnouncementService : IAnnouncementService
         _repositoryWrapper = repositoryWrapper;
     }
 
-    public async Task<AnnouncementResponse?> Create(Guid shelterId, PostAnnouncementRequest announcement)
+    public async Task<Guid?> Create(Guid shelterId, PostAnnouncementRequest announcement)
     {
         var announcementToCreate = announcement.Adapt<Announcement>();
         announcementToCreate.Status = AnnouncementStatus.Open;
@@ -41,7 +41,7 @@ public class AnnouncementService : IAnnouncementService
         var createdAnnouncement = await _repositoryWrapper.AnnouncementRepository.Create(announcementToCreate);
         await _repositoryWrapper.Save();
 
-        return createdAnnouncement.Adapt<AnnouncementResponse>();
+        return createdAnnouncement.ID;
     }
 
     public async Task<bool> Update(Guid userId, Guid announcementId, PutAnnouncementRequest announcement)

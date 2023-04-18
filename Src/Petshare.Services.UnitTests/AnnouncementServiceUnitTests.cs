@@ -12,7 +12,7 @@ namespace Petshare.Services.UnitTests;
 public class AnnouncementServiceUnitTests
 {
     [Fact]
-    public async Task Create_ReturnsCreatedAnnouncementIfPetIdGiven()
+    public async Task Create_ReturnsCreatedAnnouncementIdIfPetIdGiven()
     {
         // Arrange
         var shelterMock = new Shelter
@@ -48,10 +48,7 @@ public class AnnouncementServiceUnitTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(announcementToCreate.Title, result.Title);
-        Assert.Equal(announcementToCreate.Description, result.Description);
-        Assert.Equal(petMock.ID, result.Pet.ID);
-        Assert.Equal(shelterMock.ID, result.Pet.ShelterID);
+        Assert.IsType<Guid>(result);
     }
 
     [Fact]
