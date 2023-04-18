@@ -8,7 +8,7 @@ using Petshare.Services.Abstract;
 namespace Petshare.Presentation.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("adopter")]
 public class AdopterController : ControllerBase
 {
     private readonly IServiceWrapper _serviceWrapper;

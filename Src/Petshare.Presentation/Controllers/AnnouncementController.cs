@@ -5,7 +5,7 @@ using Petshare.Services.Abstract;
 namespace Petshare.Presentation.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("announcements")]
     public class AnnouncementController : ControllerBase
     {
         private readonly IServiceWrapper _serviceWrapper;
