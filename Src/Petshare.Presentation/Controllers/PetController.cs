@@ -54,7 +54,7 @@ namespace Petshare.Presentation.Controllers
 
         [HttpPost("{petId}/photo")]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<PetResponse>> UploadPhoto(Guid petId, IFormFile photo)
+        public async Task<ActionResult<PetResponse>> UploadPhoto(Guid petId, IFormFile file)
         {
             //var shelterId = // retrieved from roles
             
@@ -63,7 +63,7 @@ namespace Petshare.Presentation.Controllers
             var shelterId = shelters.First().ID;
             //
 
-            string photoUri = await _serviceWrapper.FileService.UploadFile(photo.OpenReadStream(), photo.FileName);
+            string photoUri = await _serviceWrapper.FileService.UploadFile(file.OpenReadStream(), file.FileName);
 
             var updateSuccessful = await _serviceWrapper.PetService.UpdatePhotoUri(petId, shelterId, photoUri);
             
