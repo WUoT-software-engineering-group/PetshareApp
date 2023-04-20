@@ -25,4 +25,6 @@ public class Pet
     public string? PhotoUri { get; set; }
 
     public PetStatus Status { get; set; } = PetStatus.Active;
+
+    public Sex Sex { get; set; } = Sex.Unknown;
 }
