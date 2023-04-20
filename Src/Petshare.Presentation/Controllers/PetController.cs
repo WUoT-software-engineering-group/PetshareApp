@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Petshare.CrossCutting.DTO.Pet;
+using Petshare.CrossCutting.Utils;
 using Petshare.Services.Abstract;
 
 namespace Petshare.Presentation.Controllers
@@ -17,6 +20,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpGet("{petId}")]
+        [Authorize]
         public async Task<ActionResult<PetResponse>> GetById(Guid petId)
         {
             var pet = await _serviceWrapper.PetService.GetById(petId);
@@ -27,15 +31,15 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "shelter")]
         public async Task<ActionResult> Create([FromBody] PostPetRequest pet)
         {
-            //var shelterId = // retrieved from roles
-            //var createdPet = await _serviceWrapper.PetService.Create(shelterId, pet);
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var shelterId = identity?.GetId();
+            if (shelterId is null)
+                return BadRequest();
 
-            // TODO: remove when auth is added
-            var shelters = await _serviceWrapper.ShelterService.GetAll();
-            var shelterId = shelters.First().ID;
-            var createdPetId = await _serviceWrapper.PetService.Create(shelterId, pet);
+            var createdPetId = await _serviceWrapper.PetService.Create((Guid)shelterId, pet);
 
             return createdPetId is null
                 ? BadRequest()
@@ -43,9 +47,15 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpPut("{petId}")]
+        [Authorize(Roles = "admin,shelter")]
         public async Task<ActionResult<PetResponse>> Update(Guid petId, [FromBody] PutPetRequest pet)
         {
-            var updateSuccessful = await _serviceWrapper.PetService.Update(petId, pet);
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var userId = identity?.GetId();
+            if (userId is null)
+                return BadRequest();
+            
+            var updateSuccessful = await _serviceWrapper.PetService.Update((Guid)userId, identity?.GetRole(), petId, pet);
 
             return !updateSuccessful
                 ? BadRequest()
@@ -53,19 +63,18 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpPost("{petId}/photo")]
+        [Authorize(Roles = "shelter")]
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<PetResponse>> UploadPhoto(Guid petId, IFormFile file)
         {
-            //var shelterId = // retrieved from roles
-            
-            // TODO: remove when auth is added
-            var shelters = await _serviceWrapper.ShelterService.GetAll();
-            var shelterId = shelters.First().ID;
-            //
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var shelterId = identity?.GetId();
+            if (shelterId is null)
+                return BadRequest();
 
-            string photoUri = await _serviceWrapper.FileService.UploadFile(file.OpenReadStream(), file.FileName);
+            var photoUri = await _serviceWrapper.FileService.UploadFile(file.OpenReadStream(), file.FileName);
 
-            var updateSuccessful = await _serviceWrapper.PetService.UpdatePhotoUri(petId, shelterId, photoUri);
+            var updateSuccessful = await _serviceWrapper.PetService.UpdatePhotoUri(petId, (Guid)shelterId, photoUri);
             
             return !updateSuccessful
                 ? BadRequest()

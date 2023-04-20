@@ -1,8 +1,10 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.DTO.Pet;
 using Petshare.CrossCutting.DTO.Shelter;
+using Petshare.CrossCutting.Utils;
 using Petshare.Services.Abstract;
 
 namespace Petshare.Presentation.Controllers
@@ -57,26 +59,29 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpGet("pets")]
+        [Authorize(Roles = "shelter")]
         public async Task<ActionResult<IEnumerable<PetResponse>>> GetPets()
         {
-            //var shelterId = // retrieved from roles
-            //var pets = await _serviceWrapper.PetService.GetByShelter(shelterId);
-
-            // TODO: remove when auth is added
-            var pets = await _serviceWrapper.PetService.GetByShelter();
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var shelterId = identity?.GetId();
+            if (shelterId is null)
+                return BadRequest();
+            
+            var pets = await _serviceWrapper.PetService.GetByShelter((Guid)shelterId);
 
             return Ok(pets);
         }
 
         [HttpGet("announcements")]
+        [Authorize(Roles = "shelter")]
         public async Task<ActionResult<IEnumerable<AnnouncementResponse>>> GetAnnouncements()
         {
-            // TODO: Retrieve shelterId from auth token
-            // var shelterId = // retrieve from roles
-            var shelters = await _serviceWrapper.ShelterService.GetAll();
-            var shelterId = shelters.First().ID;
-
-            var announcements = await _serviceWrapper.AnnouncementService.GetByShelter(shelterId);
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var shelterId = identity?.GetId();
+            if (shelterId is null)
+                return BadRequest();
+            
+            var announcements = await _serviceWrapper.AnnouncementService.GetByShelter((Guid)shelterId);
 
             return Ok(announcements);
         }
