@@ -21,5 +21,7 @@ namespace Petshare.CrossCutting.DTO.Pet
         public string? PhotoUri { get; set; }
 
         public PetStatus Status { get; set; }
+
+        public Sex Sex { get; set; }
     }
 }
