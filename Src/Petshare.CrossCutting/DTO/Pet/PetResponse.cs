@@ -1,4 +1,6 @@
-﻿namespace Petshare.CrossCutting.DTO.Pet
+﻿using Petshare.CrossCutting.Enums;
+
+namespace Petshare.CrossCutting.DTO.Pet
 {
     public class PetResponse
     {
@@ -17,5 +19,9 @@
         public string Description { get; set; } = default!;
         
         public string? PhotoUri { get; set; }
+
+        public PetStatus Status { get; set; }
+
+        public Sex Sex { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Petshare.CrossCutting.DTO.Pet
+﻿using Petshare.CrossCutting.Enums;
+
+namespace Petshare.CrossCutting.DTO.Pet
 {
     public class PostPetRequest
     {
@@ -11,5 +13,7 @@
         public DateTime Birthday { get; set; }
 
         public string Description { get; set; } = default!;
+
+        public Sex Sex { get; set; }
     }
 }
