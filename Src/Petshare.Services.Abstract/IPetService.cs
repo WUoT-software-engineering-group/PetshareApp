@@ -7,13 +7,12 @@ namespace Petshare.Services.Abstract
     {
         Task<Guid?> Create(Guid shelterId, PostPetRequest pet);
 
-        Task<bool> Update(Guid petId, PutPetRequest pet);
+        Task<bool> Update(Guid userId, string? role, Guid petId, PutPetRequest pet);
 
         Task<bool> UpdatePhotoUri(Guid petId, Guid shelterId, string photoUri);
 
         Task<PetResponse?> GetById(Guid petId);
 
-        // TODO: uncomment when auth is added
-        Task<List<PetResponse>> GetByShelter(/*Guid shelterId*/);
+        Task<List<PetResponse>> GetByShelter(Guid shelterId);
     }
 }

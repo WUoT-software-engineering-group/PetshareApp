@@ -39,11 +39,13 @@ namespace Petshare.Services.UnitTests
         public async void Update_ReturnsTrueIfUpdated()
         {
             // Arrange
+            var userId = Guid.NewGuid();
             var petId = Guid.NewGuid();
             var updateParams = new PutPetRequest();
 
             var petToUpdate = updateParams.Adapt<Pet>();
             petToUpdate.ID = petId;
+            petToUpdate.Shelter = new Shelter { ID = userId };
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
@@ -52,42 +54,72 @@ namespace Petshare.Services.UnitTests
             var petService = new PetService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await petService.Update(petId, updateParams);
+            var result = 
+                await petService.Update(userId, "admin", petId, updateParams)
+                && 
+                await petService.Update(userId, "shelter", petId, updateParams);
 
             // Assert
             Assert.True(result);
         }
 
         [Fact]
-        public async void Update_ReturnsFalseIfNotFound()
+        public async void Update_ReturnsFalseIfShelterIsNotAuthor()
         {
             // Arrange
+            var userId = Guid.NewGuid();
             var petId = Guid.NewGuid();
             var updateParams = new PutPetRequest();
 
             var petToUpdate = updateParams.Adapt<Pet>();
             petToUpdate.ID = petId;
+            petToUpdate.Shelter = new Shelter { ID = Guid.NewGuid() };
 
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
-                .Returns(Task.FromResult(new List<Pet>().AsEnumerable()));
+                .Returns(Task.FromResult(new List<Pet> { petToUpdate }.AsEnumerable()));
 
             var petService = new PetService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await petService.Update(petId, updateParams);
+            var result = await petService.Update(userId, "shelter", petId, updateParams);
 
             // Assert
             Assert.False(result);
         }
-
+        
+        [Fact]
+        public async void Update_ReturnsFalseIfNotFound()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var petId = Guid.NewGuid();
+            var updateParams = new PutPetRequest();
+        
+            var petToUpdate = updateParams.Adapt<Pet>();
+            petToUpdate.ID = petId;
+            petToUpdate.Shelter = new Shelter { ID = userId };
+        
+            var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+            repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
+                .Returns(Task.FromResult(new List<Pet>().AsEnumerable()));
+        
+            var petService = new PetService(repositoryWrapperMock.Object);
+        
+            // Act
+            var result = await petService.Update(userId, "shelter", petId, updateParams);
+        
+            // Assert
+            Assert.False(result);
+        }
+        
         [Fact]
         public async void GetByShelter_ReturnsListOfPetsFromThatShelter()
         {
             // Arrange
             var shelterId = Guid.NewGuid();
             var properShelter = new Shelter { ID = shelterId };
-
+        
             IEnumerable<Pet> pets = new List<Pet>
             {
                 new() { ID = Guid.NewGuid(), Shelter = properShelter },
@@ -96,23 +128,21 @@ namespace Petshare.Services.UnitTests
                 new() { ID = Guid.NewGuid(), Shelter = properShelter },
                 new() { ID = Guid.NewGuid(), Shelter = properShelter },
             };
-
+        
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             repositoryWrapperMock.Setup(r => r.PetRepository.FindByCondition(It.IsAny<Expression<Func<Pet, bool>>>()))
                 .Returns(Task.FromResult(pets));
-
+        
             var petService = new PetService(repositoryWrapperMock.Object);
-
+        
             // Act
-            //TODO: uncomment when GetByShelter method is completed
-            var result = await petService.GetByShelter(/*shelterId*/);
-
+            var result = await petService.GetByShelter(shelterId);
+        
             // Assert
             Assert.NotNull(result);
             Assert.IsType<List<PetResponse>>(result);
-            //TODO: uncomment when GetByShelter method is completed
-            //Assert.Equal(5, result.Count);
-            //Assert.True(result.All(x => x.ShelterID == shelterId));
+            Assert.Equal(5, result.Count);
+            Assert.True(result.All(x => x.ShelterID == shelterId));
         }
 
         [Fact]

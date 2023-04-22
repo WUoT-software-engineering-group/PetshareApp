@@ -37,13 +37,13 @@ public class AnnouncementService : IAnnouncementService
         return createdAnnouncement.ID;
     }
 
-    public async Task<bool> Update(Guid userId, Guid announcementId, PutAnnouncementRequest announcement)
+    public async Task<bool> Update(Guid userId, string? role, Guid announcementId, PutAnnouncementRequest announcement)
     {
-        // TODO: dodać weryfikację czy użytkownik ma uprawnienia do edycji ogłoszenia
         var announcementToUpdate = (await _repositoryWrapper.AnnouncementRepository.FindByCondition(a => a.ID == announcementId))
             .SingleOrDefault();
 
-        if (announcementToUpdate is null)
+        if (announcementToUpdate is null 
+            || (role == "shelter" && announcementToUpdate.Author.ID != userId))
             return false;
 
         announcementToUpdate = announcement.Adapt(announcementToUpdate);

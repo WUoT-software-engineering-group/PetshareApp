@@ -35,10 +35,11 @@ namespace Petshare.Services
             return createdPet.ID;
         }
 
-        public async Task<bool> Update(Guid petId, PutPetRequest pet)
+        public async Task<bool> Update(Guid userId, string? role, Guid petId, PutPetRequest pet)
         {
             var petToUpdate = (await _repositoryWrapper.PetRepository.FindByCondition(x => x.ID == petId)).SingleOrDefault();
-            if (petToUpdate is null)
+            if (petToUpdate is null
+                || (role == "shelter" && petToUpdate.Shelter.ID != userId))
             {
                 return false;
             }
@@ -52,7 +53,7 @@ namespace Petshare.Services
         public async Task<bool> UpdatePhotoUri(Guid petId, Guid shelterId, string photoUri)
         {
             var petToUpdate = (await _repositoryWrapper.PetRepository.FindByCondition(x => x.ID == petId)).SingleOrDefault();
-            if (petToUpdate is null || petToUpdate.Shelter.ID.CompareTo(shelterId) != 0)
+            if (petToUpdate is null || petToUpdate.Shelter.ID != shelterId)
             {
                 return false;
             }
@@ -70,12 +71,10 @@ namespace Petshare.Services
             return petsByShelter.SingleOrDefault()?.Adapt<PetResponse>();
         }
 
-        // TODO: uncomment when auth is added
-        public async Task<List<PetResponse>> GetByShelter(/*Guid shelterId*/)
+        public async Task<List<PetResponse>> GetByShelter(Guid shelterId)
         {
             var petsByShelter = await _repositoryWrapper.PetRepository
-                //.FindByCondition(x => x.Shelter.ID == shelterId);
-                .FindAll();
+                .FindByCondition(x => x.Shelter.ID == shelterId);
             return petsByShelter.ToList().Adapt<List<PetResponse>>();
         }
     }
