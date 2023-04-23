@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Petshare.CrossCutting.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Petshare.Domain.Entities;
@@ -21,5 +22,9 @@ public class Pet
 
     public string Description { get; set; } = default!;
 
-    public byte[] Photo { get; set; } = default!;
+    public string? PhotoUri { get; set; }
+
+    public PetStatus Status { get; set; } = PetStatus.Active;
+
+    public Sex Sex { get; set; } = Sex.Unknown;
 }

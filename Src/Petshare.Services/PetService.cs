@@ -1,4 +1,6 @@
-﻿using Mapster;
+﻿using System.Net.Http.Json;
+using Mapster;
+using Microsoft.AspNetCore.Http;
 using Petshare.CrossCutting.DTO.Pet;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
@@ -15,7 +17,7 @@ namespace Petshare.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<PetResponse?> Create(Guid shelterId, PostPetRequest pet)
+        public async Task<Guid?> Create(Guid shelterId, PostPetRequest pet)
         {
             var petToCreate = pet.Adapt<Pet>();
 
@@ -30,18 +32,34 @@ namespace Petshare.Services
             var createdPet = await _repositoryWrapper.PetRepository.Create(petToCreate);
             await _repositoryWrapper.Save();
 
-            return createdPet?.Adapt<PetResponse>();
+            return createdPet.ID;
         }
 
-        public async Task<bool> Update(Guid petId, PutPetRequest pet)
+        public async Task<bool> Update(Guid userId, string? role, Guid petId, PutPetRequest pet)
         {
             var petToUpdate = (await _repositoryWrapper.PetRepository.FindByCondition(x => x.ID == petId)).SingleOrDefault();
-            if (petToUpdate is null)
+            if (petToUpdate is null
+                || (role == "shelter" && petToUpdate.Shelter.ID != userId))
             {
                 return false;
             }
 
             await _repositoryWrapper.PetRepository.Update(pet.Adapt(petToUpdate));
+            await _repositoryWrapper.Save();
+
+            return true;
+        }
+
+        public async Task<bool> UpdatePhotoUri(Guid petId, Guid shelterId, string photoUri)
+        {
+            var petToUpdate = (await _repositoryWrapper.PetRepository.FindByCondition(x => x.ID == petId)).SingleOrDefault();
+            if (petToUpdate is null || petToUpdate.Shelter.ID != shelterId)
+            {
+                return false;
+            }
+
+            petToUpdate.PhotoUri = photoUri;
+            await _repositoryWrapper.PetRepository.Update(petToUpdate);
             await _repositoryWrapper.Save();
 
             return true;
@@ -53,12 +71,10 @@ namespace Petshare.Services
             return petsByShelter.SingleOrDefault()?.Adapt<PetResponse>();
         }
 
-        // TODO: uncomment when auth is added
-        public async Task<List<PetResponse>> GetByShelter(/*Guid shelterId*/)
+        public async Task<List<PetResponse>> GetByShelter(Guid shelterId)
         {
             var petsByShelter = await _repositoryWrapper.PetRepository
-                //.FindByCondition(x => x.Shelter.ID == shelterId);
-                .FindAll();
+                .FindByCondition(x => x.Shelter.ID == shelterId);
             return petsByShelter.ToList().Adapt<List<PetResponse>>();
         }
     }

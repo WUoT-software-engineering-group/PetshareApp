@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Petshare.DataPersistence;
 
@@ -11,9 +12,11 @@ using Petshare.DataPersistence;
 namespace Petshare.DataPersistence.Migrations
 {
     [DbContext(typeof(PetshareDbContext))]
-    partial class PetshareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230415142130_add-shelter-adopter-verification-table")]
+    partial class addshelteradopterverificationtable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,10 +144,8 @@ namespace Petshare.DataPersistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhotoUri")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Sex")
-                        .HasColumnType("int");
 
                     b.Property<Guid>("ShelterID")
                         .HasColumnType("uniqueidentifier");
@@ -152,9 +153,6 @@ namespace Petshare.DataPersistence.Migrations
                     b.Property<string>("Species")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.HasKey("ID");
 

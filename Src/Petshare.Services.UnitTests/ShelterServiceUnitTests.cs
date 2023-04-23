@@ -96,7 +96,7 @@ namespace Petshare.Services.UnitTests
         }
 
         [Fact]
-        public async void Create_ReturnsCreatedShelter()
+        public async void Create_ReturnsCreatedShelterId()
         {
             // Arrange
             var shelterToCreate = new PostShelterRequest
@@ -125,15 +125,7 @@ namespace Petshare.Services.UnitTests
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<ShelterResponse>(result);
-            Assert.Equal(shelterToCreate.UserName, result.UserName);
-            Assert.Equal(shelterToCreate.PhoneNumber, result.PhoneNumber);
-            Assert.Equal(shelterToCreate.FullShelterName, result.FullShelterName);
-            Assert.Equal(shelterToCreate.Address.Street, result.Address.Street);
-            Assert.Equal(shelterToCreate.Address.City, result.Address.City);
-            Assert.Equal(shelterToCreate.Address.Province, result.Address.Province);
-            Assert.Equal(shelterToCreate.Address.Country, result.Address.Country);
-            Assert.Equal(shelterToCreate.Address.PostalCode, result.Address.PostalCode);
+            Assert.IsType<Guid>(result);
         }
 
         [Fact]

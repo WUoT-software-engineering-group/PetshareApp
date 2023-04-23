@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Petshare.CrossCutting.DTO.Announcement;
+using Petshare.CrossCutting.Utils;
 using Petshare.Services.Abstract;
 
 namespace Petshare.Presentation.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("announcements")]
     public class AnnouncementController : ControllerBase
     {
         private readonly IServiceWrapper _serviceWrapper;
@@ -16,6 +19,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpGet("{announcementId}")]
+        [Authorize]
         public async Task<ActionResult<AnnouncementResponse>> GetById(Guid announcementId)
         {
             var announcement = await _serviceWrapper.AnnouncementService.GetById(announcementId);
@@ -29,6 +33,7 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<List<AnnouncementResponse>>> GetByFilters([FromQuery] GetAnnouncementsRequest filters)
         {
             var announcements = await _serviceWrapper.AnnouncementService.GetByFilters(filters);
@@ -37,29 +42,34 @@ namespace Petshare.Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "shelter")]
         public async Task<ActionResult<AnnouncementResponse>> Create([FromBody] PostAnnouncementRequest announcement)
         {
-            // TODO: Wyciągać shelterId z tokena, jak ogarniemy autoryzację
-            // var shelterId = // retrieve from roles
-            //var createdAnnouncement = await _serviceWrapper.AnnouncementService.Create(shelterId, announcement);
-
-            var shelters = await _serviceWrapper.ShelterService.GetAll();
-            var shelterId = shelters.First().ID;
-            var createdAnnouncement = await _serviceWrapper.AnnouncementService.Create(shelterId, announcement);
-
-            if (createdAnnouncement == null)
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var shelterId = identity?.GetId();
+            if (shelterId is null)
                 return BadRequest();
-            return Ok(createdAnnouncement);
+
+            var createdAnnouncementId = await _serviceWrapper.AnnouncementService.Create((Guid)shelterId, announcement);
+
+            if (createdAnnouncementId == null)
+                return BadRequest();
+            return Created(createdAnnouncementId.ToString(), null);
         }
 
         [HttpPut]
         [Route("{announcementId}")]
+        [Authorize(Roles = "admin,shelter")]
         public async Task<ActionResult> Update(Guid announcementId, [FromBody] PutAnnouncementRequest announcement)
         {
-            // TODO: Wyciągać userId z tokena, jak ogarniemy autoryzację
-            var userId = Guid.NewGuid();
-            if (!await _serviceWrapper.AnnouncementService.Update(userId, announcementId, announcement))
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var userId = identity?.GetId();
+            if (userId is null)
                 return BadRequest();
+
+            if (!await _serviceWrapper.AnnouncementService.Update((Guid)userId, identity?.GetRole() ,announcementId, announcement))
+                return BadRequest();
+            
             return Ok();
         }
     }

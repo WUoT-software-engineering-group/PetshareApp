@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace Petshare.CrossCutting.Utils
 {
@@ -15,5 +16,14 @@ namespace Petshare.CrossCutting.Utils
             );
             return Expression.Lambda<Func<T, bool>>(body, param);
         }
+
+        public static Guid? GetId(this ClaimsIdentity identity)
+        {
+            if (Guid.TryParse(identity.FindFirst("db_id")?.Value, out var id))
+                return id;
+            return null;
+        }
+
+        public static string? GetRole(this ClaimsIdentity identity) => identity.FindFirst(ClaimsIdentity.DefaultRoleClaimType)?.Value;
     }
 }

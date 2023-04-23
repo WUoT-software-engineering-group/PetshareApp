@@ -18,53 +18,32 @@ public class AnnouncementService : IAnnouncementService
         _repositoryWrapper = repositoryWrapper;
     }
 
-    public async Task<AnnouncementResponse?> Create(Guid shelterId, PostAnnouncementRequest announcement)
+    public async Task<Guid?> Create(Guid shelterId, PostAnnouncementRequest announcement)
     {
         var announcementToCreate = announcement.Adapt<Announcement>();
         announcementToCreate.Status = AnnouncementStatus.Open;
 
-        if (announcement.PetId.HasValue)
-        {
-            var pet = (await _repositoryWrapper.PetRepository.FindByCondition(p => p.ID == announcement.PetId))
-                .SingleOrDefault();
-            if (pet == null)
-                return null;
-
-            announcementToCreate.Pet = pet;
-            if (shelterId != pet.Shelter.ID)
-                return null;
-            announcementToCreate.Author = pet.Shelter;
-        }
-        else if (announcement.Pet is not null)
-        {
-            var petToCreate = announcement.Pet.Adapt<Pet>();
-
-            var petShelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == shelterId))
-                .SingleOrDefault();
-            if (petShelter is null)
-                return null;
-
-            petToCreate.Shelter = petShelter;
-
-            announcementToCreate.Pet = petToCreate;
-            announcementToCreate.Author = petShelter;
-        }
-        else
+        var pet = (await _repositoryWrapper.PetRepository.FindByCondition(p => p.ID == announcement.PetId))
+            .SingleOrDefault();
+        if (pet == null || shelterId != pet.Shelter.ID)
             return null;
+
+        announcementToCreate.Pet = pet;
+        announcementToCreate.Author = pet.Shelter;
 
         var createdAnnouncement = await _repositoryWrapper.AnnouncementRepository.Create(announcementToCreate);
         await _repositoryWrapper.Save();
 
-        return createdAnnouncement.Adapt<AnnouncementResponse>();
+        return createdAnnouncement.ID;
     }
 
-    public async Task<bool> Update(Guid userId, Guid announcementId, PutAnnouncementRequest announcement)
+    public async Task<bool> Update(Guid userId, string? role, Guid announcementId, PutAnnouncementRequest announcement)
     {
-        // TODO: dodać weryfikację czy użytkownik ma uprawnienia do edycji ogłoszenia
         var announcementToUpdate = (await _repositoryWrapper.AnnouncementRepository.FindByCondition(a => a.ID == announcementId))
             .SingleOrDefault();
 
-        if (announcementToUpdate is null)
+        if (announcementToUpdate is null 
+            || (role == "shelter" && announcementToUpdate.Author.ID != userId))
             return false;
 
         announcementToUpdate = announcement.Adapt(announcementToUpdate);
@@ -84,6 +63,12 @@ public class AnnouncementService : IAnnouncementService
         }
 
         return announcement.Adapt<AnnouncementResponse>();
+    }
+
+    public async Task<List<AnnouncementResponse>> GetByShelter(Guid shelterId)
+    {
+        var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.Pet.Shelter.ID == shelterId);
+        return announcements.Adapt<List<AnnouncementResponse>>();
     }
 
     public async Task<List<AnnouncementResponse>> GetByFilters(GetAnnouncementsRequest filters)

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Petshare.DataPersistence;
 
@@ -11,9 +12,11 @@ using Petshare.DataPersistence;
 namespace Petshare.DataPersistence.Migrations
 {
     [DbContext(typeof(PetshareDbContext))]
-    partial class PetshareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230411200429_remove-pet-photo")]
+    partial class removepetphoto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,6 +38,8 @@ namespace Petshare.DataPersistence.Migrations
 
                     b.HasKey("AdopterID", "AnnouncementID");
 
+                    b.HasIndex("AnnouncementID");
+
                     b.ToTable("FinalizedAnnouncements", (string)null);
                 });
 
@@ -47,6 +52,8 @@ namespace Petshare.DataPersistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("AdopterID", "AnnouncementID");
+
+                    b.HasIndex("AnnouncementID");
 
                     b.ToTable("FollowedAnnouncements", (string)null);
                 });
@@ -140,21 +147,12 @@ namespace Petshare.DataPersistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhotoUri")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Sex")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("ShelterID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Species")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
@@ -184,19 +182,6 @@ namespace Petshare.DataPersistence.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Report");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("Petshare.Domain.Entities.ShelterAdopterVerification", b =>
-                {
-                    b.Property<Guid>("ShelterID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AdopterID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ShelterID", "AdopterID");
-
-                    b.ToTable("VerifiedAdopters", (string)null);
                 });
 
             modelBuilder.Entity("Petshare.Domain.Entities.User", b =>
@@ -267,9 +252,6 @@ namespace Petshare.DataPersistence.Migrations
                 {
                     b.HasBaseType("Petshare.Domain.Entities.User");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.ToTable("Adopters", (string)null);
                 });
 
@@ -285,6 +267,44 @@ namespace Petshare.DataPersistence.Migrations
                         .HasColumnType("bit");
 
                     b.ToTable("Shelters", (string)null);
+                });
+
+            modelBuilder.Entity("Petshare.Domain.Entities.AdopterAnnouncementFinalized", b =>
+                {
+                    b.HasOne("Petshare.Domain.Entities.Adopter", "Adopter")
+                        .WithMany()
+                        .HasForeignKey("AdopterID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Petshare.Domain.Entities.Announcement", "Announcement")
+                        .WithMany()
+                        .HasForeignKey("AnnouncementID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Adopter");
+
+                    b.Navigation("Announcement");
+                });
+
+            modelBuilder.Entity("Petshare.Domain.Entities.AdopterAnnouncementFollowed", b =>
+                {
+                    b.HasOne("Petshare.Domain.Entities.Adopter", "Adopter")
+                        .WithMany()
+                        .HasForeignKey("AdopterID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Petshare.Domain.Entities.Announcement", "Announcement")
+                        .WithMany()
+                        .HasForeignKey("AnnouncementID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Adopter");
+
+                    b.Navigation("Announcement");
                 });
 
             modelBuilder.Entity("Petshare.Domain.Entities.Announcement", b =>

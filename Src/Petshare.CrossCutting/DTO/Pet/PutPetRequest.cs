@@ -1,5 +1,4 @@
-﻿using Petshare.CrossCutting.Utils;
-using System.Text.Json.Serialization;
+﻿using Petshare.CrossCutting.Enums;
 
 namespace Petshare.CrossCutting.DTO.Pet
 {
@@ -15,7 +14,8 @@ namespace Petshare.CrossCutting.DTO.Pet
 
         public string Description { get; set; } = default!;
 
-        [JsonConverter(typeof(StringToByteArrayConverter))]
-        public byte[] Photo { get; set; } = default!;
+        public PetStatus Status { get; set; }
+
+        public Sex Sex { get; set; }
     }
 }
