@@ -10,6 +10,7 @@ public class RepositoryWrapper : IRepositoryWrapper, IDisposable
     private IRepository<Pet>? _petRepository;
     private IRepository<Announcement>? _announcementRepository;
     private IRepository<Adopter>? _adopterRepository;
+    private IRepository<Application>? _applicationsRepository;
     private IRepository<ShelterAdopterVerification>? _shelterAdopterVerificationRepository;
 
     public IRepository<Shelter> ShelterRepository
@@ -45,6 +46,15 @@ public class RepositoryWrapper : IRepositoryWrapper, IDisposable
         {
             _adopterRepository ??= new Repository<Adopter>(_repositoryDbContext);
             return _adopterRepository;
+        }
+    }
+
+    public IRepository<Application> ApplicationsRepository
+    {
+        get
+        {
+            _applicationsRepository ??= new Repository<Application>(_repositoryDbContext);
+            return _applicationsRepository;
         }
     }
 
