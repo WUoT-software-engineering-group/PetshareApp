@@ -1,14 +1,17 @@
 ﻿using Petshare.CrossCutting.DTO.Announcement;
+using Petshare.CrossCutting.Utils;
 
 namespace Petshare.Services.Abstract;
 
 public interface IAnnouncementService
 {
-    Task<Guid?> Create(Guid shelterId, PostAnnouncementRequest announcement);
+    Task<ServiceResponse> Create(Guid shelterId, PostAnnouncementRequest announcement);
 
-    Task<bool> Update(Guid userId, string? role, Guid announcementId, PutAnnouncementRequest announcement);
+    Task<ServiceResponse> Update(Guid userId, string? role, Guid announcementId, PutAnnouncementRequest announcement);
 
-    Task<AnnouncementResponse?> GetById(Guid announcementId);
-    Task<List<AnnouncementResponse>> GetByShelter(Guid shelterId);
-    Task<List<AnnouncementResponse>> GetByFilters(GetAnnouncementsRequest filters);
+    Task<ServiceResponse> GetById(Guid announcementId);
+
+    Task<ServiceResponse> GetByShelter(Guid shelterId);
+
+    Task<ServiceResponse> GetByFilters(GetAnnouncementsRequest filters);
 }

@@ -48,7 +48,7 @@ public class AdopterController : ControllerBase
     {
         var result = await _serviceWrapper.AdopterService.Create(adopter);
 
-        return Created(result.Data?.ToString(), null);
+        return Created(result.Data!.ToString(), null);
     }
 
     [HttpPut]

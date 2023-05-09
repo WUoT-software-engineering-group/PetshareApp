@@ -36,6 +36,8 @@ namespace Petshare.CrossCutting.Utils
         public static bool Created(this HttpStatusCode statusCode) => statusCode == HttpStatusCode.Created;
 
         public static bool NotFound(this HttpStatusCode statusCode) => statusCode == HttpStatusCode.NotFound;
+
+        public static bool BadRequest(this HttpStatusCode statusCode) => statusCode == HttpStatusCode.BadRequest;
         #endregion
     }
 }
