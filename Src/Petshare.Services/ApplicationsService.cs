@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Petshare.CrossCutting.DTO.Applications;
+using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 using Petshare.Services.Abstract;
 
@@ -12,6 +13,25 @@ public class ApplicationsService : IApplicationsService
     public ApplicationsService(IRepositoryWrapper repositoryWrapper)
     {
         _repositoryWrapper = repositoryWrapper;
+    }
+
+    public async Task<Guid?> Create(Guid announcementId)
+    {
+        var announcement = (await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.ID == announcementId)).FirstOrDefault();
+
+        if (announcement is null)
+        {
+            return null;
+        }
+
+        var application = await _repositoryWrapper.ApplicationsRepository
+            .Create(new Application
+            {
+                Announcement = announcement
+            });
+        await _repositoryWrapper.Save();
+
+        return application.ID;
     }
 
     public async Task<List<ApplicationResponse>> GetAll(string role, Guid userId)

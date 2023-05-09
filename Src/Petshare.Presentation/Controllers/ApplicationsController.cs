@@ -18,6 +18,22 @@ public class ApplicationsController : ControllerBase
         _serviceWrapper = serviceWrapper;
     }
 
+    [HttpPost]
+    [Authorize(Roles = "adopter")]
+    public async Task<ActionResult> Create([FromBody] Guid announcementId)
+    {
+        var identity = HttpContext.User.Identity as ClaimsIdentity;
+        var adopterId = identity?.GetId();
+        if (adopterId is null)
+            return Unauthorized();
+
+        var createdApplicationId = await _serviceWrapper.ApplicationsService.Create(announcementId);
+
+        return createdApplicationId is null
+            ? BadRequest()
+            : Created(createdApplicationId.ToString(), null);
+    }
+
     [HttpGet]
     [Authorize]
     public async Task<ActionResult<IEnumerable<ApplicationResponse>>> GetAll()
