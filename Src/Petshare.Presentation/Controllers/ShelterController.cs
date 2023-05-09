@@ -34,18 +34,18 @@ namespace Petshare.Presentation.Controllers
         [Route("{shelterId}")]
         public async Task<ActionResult<ShelterResponse>> GetById(Guid shelterId)
         {
-            var shelter = await _serviceWrapper.ShelterService.GetById(shelterId);
-            if (shelter == null)
+            var result = await _serviceWrapper.ShelterService.GetById(shelterId);
+            if (result.StatusCode.NotFound())
                 return NotFound();
-            return Ok(shelter);
+            return Ok(result.Data);
         }
 
         [HttpPost]
         [Authorize]
         public async Task<ActionResult> Create([FromBody] PostShelterRequest shelter)
         {
-            var createdShelterId = await _serviceWrapper.ShelterService.Create(shelter);
-            return Created(createdShelterId.ToString(), null);
+            var result = await _serviceWrapper.ShelterService.Create(shelter);
+            return Created(result.Data!.ToString(), null);
         }
 
         [HttpPut]
@@ -53,7 +53,7 @@ namespace Petshare.Presentation.Controllers
         [Route("{shelterId}")]
         public async Task<ActionResult> Update(Guid shelterId, [FromBody] PutShelterRequest shelter)
         {
-            if (!await _serviceWrapper.ShelterService.Update(shelterId, shelter))
+            if ((await _serviceWrapper.ShelterService.Update(shelterId, shelter)).StatusCode.BadRequest())
                 return BadRequest();
             return Ok();
         }
@@ -67,9 +67,9 @@ namespace Petshare.Presentation.Controllers
             if (shelterId is null)
                 return BadRequest();
             
-            var pets = await _serviceWrapper.PetService.GetByShelter((Guid)shelterId);
+            var result = await _serviceWrapper.PetService.GetByShelter((Guid)shelterId);
 
-            return Ok(pets);
+            return Ok(result.Data);
         }
 
         [HttpGet("announcements")]
@@ -81,9 +81,9 @@ namespace Petshare.Presentation.Controllers
             if (shelterId is null)
                 return BadRequest();
             
-            var announcements = await _serviceWrapper.AnnouncementService.GetByShelter((Guid)shelterId);
+            var result = await _serviceWrapper.AnnouncementService.GetByShelter((Guid)shelterId);
 
-            return Ok(announcements);
+            return Ok(result.Data);
         }
     }
 }

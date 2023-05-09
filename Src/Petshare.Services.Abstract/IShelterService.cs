@@ -1,15 +1,16 @@
 ﻿using Petshare.CrossCutting.DTO.Shelter;
+using Petshare.CrossCutting.Utils;
 
 namespace Petshare.Services.Abstract
 {
     public interface IShelterService
     {
-        Task<Guid> Create(PostShelterRequest shelter);
+        Task<ServiceResponse> Create(PostShelterRequest shelter);
 
-        Task<bool> Update(Guid id, PutShelterRequest shelter);
+        Task<ServiceResponse> Update(Guid id, PutShelterRequest shelter);
 
-        Task<List<ShelterResponse>> GetAll();
+        Task<ServiceResponse> GetAll();
 
-        Task<ShelterResponse?> GetById(Guid id);
+        Task<ServiceResponse> GetById(Guid id);
     }
 }

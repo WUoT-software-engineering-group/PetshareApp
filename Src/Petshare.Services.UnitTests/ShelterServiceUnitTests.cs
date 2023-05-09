@@ -1,5 +1,6 @@
 using Petshare.CrossCutting.DTO.Address;
 using Petshare.CrossCutting.DTO.Shelter;
+using Petshare.CrossCutting.Utils;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 
@@ -27,11 +28,14 @@ namespace Petshare.Services.UnitTests
 
             // Act
             var result = await shelterService.GetAll();
+            var resultData = result.Data as List<ShelterResponse>;
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<List<ShelterResponse>>(result);
-            Assert.Equal(5, result.Count);
+            Assert.True(result.StatusCode.Ok());
+            Assert.NotNull(resultData);
+            Assert.IsType<List<ShelterResponse>>(resultData);
+            Assert.Equal(5, resultData.Count);
         }
 
         [Fact]
@@ -63,23 +67,26 @@ namespace Petshare.Services.UnitTests
 
             // Act
             var result = await shelterService.GetById(shelterId);
+            var resultData = result.Data as ShelterResponse;
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<ShelterResponse>(result);
-            Assert.Equal(shelter.ID, result.ID);
-            Assert.Equal(shelter.UserName, result.UserName);
-            Assert.Equal(shelter.PhoneNumber, result.PhoneNumber);
-            Assert.Equal(shelter.FullShelterName, result.FullShelterName);
-            Assert.Equal(shelter.Address.Street, result.Address.Street);
-            Assert.Equal(shelter.Address.City, result.Address.City);
-            Assert.Equal(shelter.Address.Province, result.Address.Province);
-            Assert.Equal(shelter.Address.Country, result.Address.Country);
-            Assert.Equal(shelter.Address.PostalCode, result.Address.PostalCode);
+            Assert.True(result.StatusCode.Ok());
+            Assert.NotNull(resultData);
+            Assert.IsType<ShelterResponse>(resultData);
+            Assert.Equal(shelter.ID, resultData.ID);
+            Assert.Equal(shelter.UserName, resultData.UserName);
+            Assert.Equal(shelter.PhoneNumber, resultData.PhoneNumber);
+            Assert.Equal(shelter.FullShelterName, resultData.FullShelterName);
+            Assert.Equal(shelter.Address.Street, resultData.Address.Street);
+            Assert.Equal(shelter.Address.City, resultData.Address.City);
+            Assert.Equal(shelter.Address.Province, resultData.Address.Province);
+            Assert.Equal(shelter.Address.Country, resultData.Address.Country);
+            Assert.Equal(shelter.Address.PostalCode, resultData.Address.PostalCode);
         }
 
         [Fact]
-        public async void GetById_ReturnsNullIfNotFound()
+        public async void GetById_ReturnsNotFoundStatusIfShelterNotFound()
         {
             // Arrange
             var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
@@ -92,7 +99,9 @@ namespace Petshare.Services.UnitTests
             var result = await shelterService.GetById(Guid.NewGuid());
 
             // Assert
-            Assert.Null(result);
+            Assert.NotNull(result);
+            Assert.True(result.StatusCode.NotFound());
+            Assert.Null(result.Data);
         }
 
         [Fact]
@@ -122,14 +131,17 @@ namespace Petshare.Services.UnitTests
 
             // Act
             var result = await shelterService.Create(shelterToCreate);
+            var resultData = result.Data as Guid?;
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<Guid>(result);
+            Assert.True(result.StatusCode.Created());
+            Assert.NotNull(resultData);
+            Assert.IsType<Guid>(resultData);
         }
 
         [Fact]
-        public async void Update_ReturnsTrueIfUpdated()
+        public async void Update_ReturnsOkStatusIfUpdated()
         {
             // Arrange
             var shelterId = Guid.NewGuid();
@@ -145,11 +157,12 @@ namespace Petshare.Services.UnitTests
             var result = await shelterService.Update(shelterId, shelterToUpdate);
 
             // Assert
-            Assert.True(result);
+            Assert.NotNull(result);
+            Assert.True(result.StatusCode.Ok());
         }
 
         [Fact]
-        public async void Update_ReturnsFalseIfNotFound()
+        public async void Update_ReturnsBadRequestStatusIfNotFound()
         {
             // Arrange
             var shelterId = Guid.NewGuid();
@@ -165,7 +178,8 @@ namespace Petshare.Services.UnitTests
             var result = await shelterService.Update(shelterId, shelterToUpdate);
 
             // Assert
-            Assert.False(result);
+            Assert.NotNull(result);
+            Assert.True(result.StatusCode.BadRequest());
         }
     }
 }

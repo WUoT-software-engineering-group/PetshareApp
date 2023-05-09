@@ -29,7 +29,6 @@ namespace Petshare.CrossCutting.Utils
         public static string? GetRole(this ClaimsIdentity identity) => identity.FindFirst(ClaimsIdentity.DefaultRoleClaimType)?.Value;
         #endregion
 
-
         #region HttpStatusCode Extensions
         public static bool Ok(this HttpStatusCode statusCode) => statusCode == HttpStatusCode.OK;
 
