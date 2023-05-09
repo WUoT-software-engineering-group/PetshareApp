@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Petshare.CrossCutting.Enums;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,5 +17,5 @@ public class Application
 
     public DateTime DateOfApplication { get; set; }
 
-    public bool IsWithdrawn { get; set; }
+    public ApplicationStatus Status { get; set; } = ApplicationStatus.Created;
 }
