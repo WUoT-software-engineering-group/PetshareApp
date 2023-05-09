@@ -1,7 +1,6 @@
-﻿using System.Net.Http.Json;
-using Mapster;
-using Microsoft.AspNetCore.Http;
+﻿using Mapster;
 using Petshare.CrossCutting.DTO.Pet;
+using Petshare.CrossCutting.Utils;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 using Petshare.Services.Abstract;
@@ -17,14 +16,14 @@ namespace Petshare.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<Guid?> Create(Guid shelterId, PostPetRequest pet)
+        public async Task<ServiceResponse> Create(Guid shelterId, PostPetRequest pet)
         {
             var petToCreate = pet.Adapt<Pet>();
 
             var petShelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(x => x.ID == shelterId)).SingleOrDefault();
             if (petShelter is null)
             {
-                return null;
+                return ServiceResponse.BadRequest();
             }
 
             petToCreate.Shelter = petShelter;
@@ -32,50 +31,54 @@ namespace Petshare.Services
             var createdPet = await _repositoryWrapper.PetRepository.Create(petToCreate);
             await _repositoryWrapper.Save();
 
-            return createdPet.ID;
+            return ServiceResponse.Created(createdPet.ID);
         }
 
-        public async Task<bool> Update(Guid userId, string? role, Guid petId, PutPetRequest pet)
+        public async Task<ServiceResponse> Update(Guid userId, string? role, Guid petId, PutPetRequest pet)
         {
             var petToUpdate = (await _repositoryWrapper.PetRepository.FindByCondition(x => x.ID == petId)).SingleOrDefault();
             if (petToUpdate is null
                 || (role == "shelter" && petToUpdate.Shelter.ID != userId))
             {
-                return false;
+                return ServiceResponse.BadRequest();
             }
 
             await _repositoryWrapper.PetRepository.Update(pet.Adapt(petToUpdate));
             await _repositoryWrapper.Save();
 
-            return true;
+            return ServiceResponse.Ok();
         }
 
-        public async Task<bool> UpdatePhotoUri(Guid petId, Guid shelterId, string photoUri)
+        public async Task<ServiceResponse> UpdatePhotoUri(Guid petId, Guid shelterId, string photoUri)
         {
             var petToUpdate = (await _repositoryWrapper.PetRepository.FindByCondition(x => x.ID == petId)).SingleOrDefault();
             if (petToUpdate is null || petToUpdate.Shelter.ID != shelterId)
             {
-                return false;
+                return ServiceResponse.BadRequest();
             }
 
             petToUpdate.PhotoUri = photoUri;
             await _repositoryWrapper.PetRepository.Update(petToUpdate);
             await _repositoryWrapper.Save();
 
-            return true;
+            return ServiceResponse.Ok();
         }
 
-        public async Task<PetResponse?> GetById(Guid petId)
+        public async Task<ServiceResponse> GetById(Guid petId)
         {
             var petsByShelter = await _repositoryWrapper.PetRepository.FindByCondition(x => x.ID == petId);
-            return petsByShelter.SingleOrDefault()?.Adapt<PetResponse>();
+            var pet = petsByShelter.SingleOrDefault();
+
+            return pet is not null
+                ? ServiceResponse.Ok(pet.Adapt<PetResponse>())
+                : ServiceResponse.NotFound();
         }
 
-        public async Task<List<PetResponse>> GetByShelter(Guid shelterId)
+        public async Task<ServiceResponse> GetByShelter(Guid shelterId)
         {
             var petsByShelter = await _repositoryWrapper.PetRepository
                 .FindByCondition(x => x.Shelter.ID == shelterId);
-            return petsByShelter.ToList().Adapt<List<PetResponse>>();
+            return ServiceResponse.Ok(petsByShelter.ToList().Adapt<List<PetResponse>>());
         }
     }
 }
