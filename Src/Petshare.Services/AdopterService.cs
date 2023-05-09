@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Petshare.CrossCutting.DTO.Adopter;
+using Petshare.CrossCutting.Utils;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 using Petshare.Services.Abstract;
@@ -15,42 +16,44 @@ public class AdopterService : IAdopterService
         _repositoryWrapper = repositoryWrapper;
     }
 
-    public async Task<List<GetAdopterResponse>> GetAll()
+    public async Task<ServiceResponse> GetAll()
     {
         var adopters = await _repositoryWrapper.AdopterRepository.FindAll();
 
-        return adopters.Adapt<List<GetAdopterResponse>>();
+        return ServiceResponse.Ok(adopters.Adapt<List<GetAdopterResponse>>());
     }
 
-    public async Task<GetAdopterResponse?> GetById(Guid id)
+    public async Task<ServiceResponse> GetById(Guid id)
     {
         var adopter = (await _repositoryWrapper.AdopterRepository.FindByCondition(a => a.ID == id)).SingleOrDefault();
-        return adopter?.Adapt<GetAdopterResponse>();
+        return adopter is not null 
+            ? ServiceResponse.Ok(adopter.Adapt<GetAdopterResponse>())
+            : ServiceResponse.NotFound();
     }
 
-    public async Task<Guid> Create(PostAdopterRequest adopterRequest)
+    public async Task<ServiceResponse> Create(PostAdopterRequest adopterRequest)
     {
         var adopterToCreate = adopterRequest.Adapt<Adopter>();
 
         var createdAdopter = await _repositoryWrapper.AdopterRepository.Create(adopterToCreate);
         await _repositoryWrapper.Save();
 
-        return createdAdopter.ID;
+        return ServiceResponse.Created(createdAdopter.ID);
     }
 
-    public async Task<bool> UpdateStatus(Guid id, PutAdopterRequest adopter)
+    public async Task<ServiceResponse> UpdateStatus(Guid id, PutAdopterRequest adopter)
     {
         var adopterToUpdate = (await _repositoryWrapper.AdopterRepository.FindByCondition(a => a.ID == id))
             .SingleOrDefault();
 
         if (adopterToUpdate is null)
-            return false;
+            return ServiceResponse.NotFound();
 
         adopterToUpdate = adopter.Adapt(adopterToUpdate);
         await _repositoryWrapper.AdopterRepository.Update(adopterToUpdate);
         await _repositoryWrapper.Save();
 
-        return true;
+        return ServiceResponse.Ok();
     }
 
     public async Task VerifyAdopterForShelter(Guid adopterId, Guid shelterId)
@@ -61,15 +64,15 @@ public class AdopterService : IAdopterService
             ShelterID = shelterId
         };
 
-        var createdVerification = await _repositoryWrapper.ShelterAdopterVerificationRepository.Create(verification);
+        await _repositoryWrapper.ShelterAdopterVerificationRepository.Create(verification);
         await _repositoryWrapper.Save();
     }
 
-    public async Task<bool> CheckIfAdopterIsVerified(Guid adopterId, Guid shelterId)
+    public async Task<ServiceResponse> CheckIfAdopterIsVerified(Guid adopterId, Guid shelterId)
     {
         var verification = (await _repositoryWrapper.ShelterAdopterVerificationRepository.FindByCondition(v =>
                        v.AdopterID == adopterId && v.ShelterID == shelterId)).SingleOrDefault();
 
-        return verification is not null;
+        return ServiceResponse.Ok(verification is not null);
     }
 }
