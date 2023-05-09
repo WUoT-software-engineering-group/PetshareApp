@@ -54,7 +54,7 @@ public class ServiceWrapper : IServiceWrapper
     {
         get
         {
-            _applicationsService ??= new ApplicationsService(_repositoryWrapper);
+            _applicationsService ??= new ApplicationsService(_repositoryWrapper, this);
             return _applicationsService;
         }
     }

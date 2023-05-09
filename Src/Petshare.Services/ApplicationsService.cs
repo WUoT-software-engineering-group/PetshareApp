@@ -9,10 +9,12 @@ namespace Petshare.Services;
 public class ApplicationsService : IApplicationsService
 {
     private readonly IRepositoryWrapper _repositoryWrapper;
+    private readonly IServiceWrapper _serviceWrapper;
 
-    public ApplicationsService(IRepositoryWrapper repositoryWrapper)
+    public ApplicationsService(IRepositoryWrapper repositoryWrapper, IServiceWrapper serviceWrapper)
     {
         _repositoryWrapper = repositoryWrapper;
+        _serviceWrapper = serviceWrapper;
     }
 
     public async Task<Guid?> Create(Guid announcementId)
@@ -44,6 +46,20 @@ public class ApplicationsService : IApplicationsService
             _ => throw new NotImplementedException(),
         };
 
-        return applications.ToList().Adapt<List<ApplicationResponse>>();
+        return applications.Adapt<List<ApplicationResponse>>();
+    }
+
+    public async Task<List<ApplicationResponse>?> GetByAnnouncement(Guid announcementId, Guid shelterId)
+    {
+        var announcement = await _serviceWrapper.AnnouncementService.GetById(announcementId);
+
+        if (announcement is null || announcement.Author.ID != shelterId)
+        {
+            return null;
+        }
+
+        var applications = await _repositoryWrapper.ApplicationsRepository.FindByCondition(x => x.Announcement.ID == announcementId);
+
+        return applications.Adapt<List<ApplicationResponse>>();
     }
 }

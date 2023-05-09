@@ -51,5 +51,27 @@ public class ApplicationsController : ControllerBase
 
         return Ok(applications);
     }
+
+    [HttpGet("{announcementId}")]
+    [Authorize(Roles = "shelter")]
+    public async Task<ActionResult<IEnumerable<ApplicationResponse>>> GetByAnnouncement(Guid announcementId)
+    {
+        var identity = HttpContext.User.Identity as ClaimsIdentity;
+        var shelterId = identity?.GetId();
+
+        if (shelterId is null)
+        {
+            return Unauthorized();
+        }
+
+        var applications = await _serviceWrapper.ApplicationsService.GetByAnnouncement(announcementId, (Guid)shelterId);
+
+        if (applications is null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(applications);
+    }
 }
 
