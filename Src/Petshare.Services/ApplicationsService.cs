@@ -1,8 +1,10 @@
 ﻿using Mapster;
 using Petshare.CrossCutting.DTO.Applications;
+using Petshare.CrossCutting.Enums;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 using Petshare.Services.Abstract;
+using System.Data;
 
 namespace Petshare.Services;
 
@@ -17,20 +19,23 @@ public class ApplicationsService : IApplicationsService
         _serviceWrapper = serviceWrapper;
     }
 
-    public async Task<Guid?> Create(Guid announcementId)
+    public async Task<Guid?> Create(Guid announcementId, Guid userId)
     {
         var announcement = (await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.ID == announcementId)).FirstOrDefault();
+        var user = (await _repositoryWrapper.AdopterRepository.FindByCondition(x => x.ID == userId)).FirstOrDefault();
 
-        if (announcement is null)
+        if (announcement is null || user is null)
         {
             return null;
         }
 
-        var application = await _repositoryWrapper.ApplicationsRepository
-            .Create(new Application
-            {
-                Announcement = announcement
-            });
+        var applicationToAdd = new Application
+        {
+            User = user,
+            Announcement = announcement
+        };
+
+        var application = await _repositoryWrapper.ApplicationsRepository.Create(applicationToAdd);
         await _repositoryWrapper.Save();
 
         return application.ID;
@@ -61,5 +66,20 @@ public class ApplicationsService : IApplicationsService
         var applications = await _repositoryWrapper.ApplicationsRepository.FindByCondition(x => x.Announcement.ID == announcementId);
 
         return applications.Adapt<List<ApplicationResponse>>();
+    }
+
+    public async Task<bool> UpdateStatus(Guid applicationId, ApplicationStatus status, Guid shelterId)
+    {
+        var application = (await _repositoryWrapper.ApplicationsRepository.FindByCondition(x => x.ID == applicationId)).FirstOrDefault();
+
+        if (application is null || application.Announcement.Author.ID != shelterId)
+        {
+            return false;
+        }
+
+        application.Status = status;
+        await _repositoryWrapper.Save();
+
+        return true;
     }
 }
