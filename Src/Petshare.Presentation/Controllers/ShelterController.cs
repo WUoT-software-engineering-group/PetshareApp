@@ -24,9 +24,9 @@ namespace Petshare.Presentation.Controllers
         [Authorize]
         public async Task<ActionResult<IEnumerable<ShelterResponse>>> GetAll()
         {
-            var shelters = await _serviceWrapper.ShelterService.GetAll();
+            var result = await _serviceWrapper.ShelterService.GetAll();
 
-            return Ok(shelters);
+            return Ok(result.Data);
         }
 
         [HttpGet]
