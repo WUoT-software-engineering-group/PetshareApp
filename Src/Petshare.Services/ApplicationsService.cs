@@ -24,16 +24,16 @@ public class ApplicationsService : IApplicationsService
     public async Task<ServiceResponse> Create(Guid announcementId, Guid userId)
     {
         var announcement = (await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.ID == announcementId)).FirstOrDefault();
-        var user = (await _repositoryWrapper.AdopterRepository.FindByCondition(x => x.ID == userId)).FirstOrDefault();
+        var adopter = (await _repositoryWrapper.AdopterRepository.FindByCondition(x => x.ID == userId)).FirstOrDefault();
 
-        if (announcement is null || user is null)
+        if (announcement is null || adopter is null)
         {
             return ServiceResponse.BadRequest();
         }
 
         var applicationToAdd = new Application
         {
-            User = user,
+            Adopter = adopter,
             Announcement = announcement
         };
 
@@ -48,7 +48,7 @@ public class ApplicationsService : IApplicationsService
         var applications = role switch
         {
             "admin" => await _repositoryWrapper.ApplicationsRepository.FindAll(),
-            "adopter" => await _repositoryWrapper.ApplicationsRepository.FindByCondition(x => x.User.ID == userId),
+            "adopter" => await _repositoryWrapper.ApplicationsRepository.FindByCondition(x => x.Adopter.ID == userId),
             "shelter" => await _repositoryWrapper.ApplicationsRepository.FindByCondition(x => x.Announcement.Author.ID == userId),
             _ => throw new NotImplementedException(),
         };
