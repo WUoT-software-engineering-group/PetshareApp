@@ -71,7 +71,14 @@ public class AdopterController : ControllerBase
         if (shelterId == null)
             return Forbid();
 
-        await _serviceWrapper.AdopterService.VerifyAdopterForShelter(adopterId, shelterId.Value);
+        var result = await _serviceWrapper.AdopterService.VerifyAdopterForShelter(adopterId, shelterId.Value);
+
+        if (result.StatusCode.NotFound())
+            return NotFound("Adopter doesn't exist");
+
+        if (result.StatusCode.BadRequest())
+            return BadRequest("Adopter already verified");
+
         return Ok();
     }
 

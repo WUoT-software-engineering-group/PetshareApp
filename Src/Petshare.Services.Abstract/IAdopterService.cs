@@ -13,7 +13,7 @@ public interface IAdopterService
 
     Task<ServiceResponse> UpdateStatus(Guid id, PutAdopterRequest adopter);
 
-    Task VerifyAdopterForShelter(Guid adopterId, Guid shelterId);
+    Task<ServiceResponse> VerifyAdopterForShelter(Guid adopterId, Guid shelterId);
 
     Task<ServiceResponse> CheckIfAdopterIsVerified(Guid adopterId, Guid shelterId);
 }

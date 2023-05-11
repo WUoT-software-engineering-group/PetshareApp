@@ -56,16 +56,28 @@ public class AdopterService : IAdopterService
         return ServiceResponse.Ok();
     }
 
-    public async Task VerifyAdopterForShelter(Guid adopterId, Guid shelterId)
+    public async Task<ServiceResponse> VerifyAdopterForShelter(Guid adopterId, Guid shelterId)
     {
-        var verification = new ShelterAdopterVerification
+        var adopter = (await _repositoryWrapper.AdopterRepository.FindByCondition(a => a.ID == adopterId))
+            .SingleOrDefault();
+        if (adopter is null)
+            return ServiceResponse.NotFound();
+
+        var verification = (await _repositoryWrapper.ShelterAdopterVerificationRepository.FindByCondition(v =>
+            v.AdopterID == adopterId && v.ShelterID == shelterId)).SingleOrDefault();
+        if (verification is not null)
+            return ServiceResponse.BadRequest();
+
+        var newVerification = new ShelterAdopterVerification
         {
             AdopterID = adopterId,
             ShelterID = shelterId
         };
 
-        await _repositoryWrapper.ShelterAdopterVerificationRepository.Create(verification);
+        await _repositoryWrapper.ShelterAdopterVerificationRepository.Create(newVerification);
         await _repositoryWrapper.Save();
+
+        return ServiceResponse.Ok();
     }
 
     public async Task<ServiceResponse> CheckIfAdopterIsVerified(Guid adopterId, Guid shelterId)
