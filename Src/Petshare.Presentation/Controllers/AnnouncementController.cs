@@ -67,7 +67,7 @@ namespace Petshare.Presentation.Controllers
             if (userId is null)
                 return BadRequest();
 
-            if (!(await _serviceWrapper.AnnouncementService.Update((Guid)userId, identity?.GetRole() ,announcementId, announcement)).StatusCode.BadRequest())
+            if ((await _serviceWrapper.AnnouncementService.Update((Guid)userId, identity?.GetRole() ,announcementId, announcement)).StatusCode.BadRequest())
                 return BadRequest();
             
             return Ok();

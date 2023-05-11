@@ -13,6 +13,9 @@ namespace Petshare.Services.Mapping
 
             config.NewConfig<PostPetRequest, Pet>()
                 .Map(dest => dest.PhotoUri, src => src.PhotoUrl);
+
+            config.NewConfig<PutPetRequest, Pet>()
+                .IgnoreNullValues(true);
         }
     }
 }

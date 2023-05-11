@@ -47,6 +47,7 @@ public class AnnouncementService : IAnnouncementService
             return ServiceResponse.BadRequest();
 
         announcementToUpdate = announcement.Adapt(announcementToUpdate);
+
         await _repositoryWrapper.AnnouncementRepository.Update(announcementToUpdate);
         await _repositoryWrapper.Save();
 

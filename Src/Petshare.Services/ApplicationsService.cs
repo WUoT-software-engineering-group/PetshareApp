@@ -80,6 +80,7 @@ public class ApplicationsService : IApplicationsService
         }
 
         application.Status = status;
+        application.LastUpdateDate = DateTime.Now;
         await _repositoryWrapper.Save();
 
         return ServiceResponse.Ok();
