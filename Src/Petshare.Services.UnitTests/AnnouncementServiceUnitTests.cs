@@ -293,7 +293,6 @@ public class AnnouncementServiceUnitTests
         Assert.Equal(announcement.Title, resultData.Title);
         Assert.Equal(announcement.Description, resultData.Description);
         Assert.Equal(announcement.Pet.ID, resultData.Pet.ID);
-        Assert.Equal(announcement.Author.ID, resultData.Author.ID);
         Assert.Equal(announcement.LastUpdateDate, resultData.LastUpdateDate);
         Assert.Equal(announcement.Status, resultData.Status);
     }

@@ -60,7 +60,7 @@ public class ApplicationsService : IApplicationsService
     {
         var result = await _serviceWrapper.AnnouncementService.GetById(announcementId);
 
-        if (result.StatusCode.NotFound() || (result.Data as AnnouncementResponse)!.Author.ID != shelterId)
+        if (result.StatusCode.NotFound() || (result.Data as AnnouncementResponse)!.Pet.Shelter.ID != shelterId)
         {
             return ServiceResponse.BadRequest();
         }

@@ -152,7 +152,7 @@ namespace Petshare.Services.UnitTests
             Assert.NotNull(resultData);
             Assert.IsType<List<PetResponse>>(resultData);
             Assert.Equal(5, resultData.Count);
-            Assert.True(resultData.All(x => x.ShelterID == shelterId));
+            Assert.True(resultData.All(x => x.Shelter.ID == shelterId));
         }
 
         [Fact]

@@ -1,4 +1,5 @@
-﻿using Petshare.CrossCutting.Enums;
+﻿using Petshare.CrossCutting.DTO.Shelter;
+using Petshare.CrossCutting.Enums;
 
 namespace Petshare.CrossCutting.DTO.Pet
 {
@@ -6,7 +7,7 @@ namespace Petshare.CrossCutting.DTO.Pet
     {
         public Guid ID { get; set; }
 
-        public Guid ShelterID { get; set; }
+        public ShelterResponse Shelter { get; set; } = default!;
 
         public string Name { get; set; } = default!;
 
@@ -18,7 +19,7 @@ namespace Petshare.CrossCutting.DTO.Pet
 
         public string Description { get; set; } = default!;
         
-        public string? PhotoUri { get; set; }
+        public string? PhotoUrl { get; set; }
 
         public PetStatus Status { get; set; }
 

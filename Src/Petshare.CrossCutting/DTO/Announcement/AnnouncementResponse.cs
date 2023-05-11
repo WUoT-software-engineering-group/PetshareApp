@@ -21,6 +21,4 @@ public class AnnouncementResponse
     public AnnouncementStatus Status { get; set; }
 
     public PetResponse Pet { get; set; } = default!;
-
-    public ShelterResponse Author { get; set; } = default!;
 }
