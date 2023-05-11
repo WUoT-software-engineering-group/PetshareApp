@@ -1,15 +1,16 @@
 ﻿using Petshare.CrossCutting.DTO.Applications;
 using Petshare.CrossCutting.Enums;
+using Petshare.CrossCutting.Utils;
 
 namespace Petshare.Services.Abstract;
 
 public interface IApplicationsService
 {
-    Task<Guid?> Create(Guid announcementId, Guid userId);
+    Task<ServiceResponse> Create(Guid announcementId, Guid userId);
 
-    Task<List<ApplicationResponse>> GetAll(string role, Guid userId);
+    Task<ServiceResponse> GetAll(string role, Guid userId);
 
-    Task<List<ApplicationResponse>?> GetByAnnouncement(Guid announcementId, Guid shelterId);
+    Task<ServiceResponse> GetByAnnouncement(Guid announcementId, Guid shelterId);
 
-    Task<bool> UpdateStatus(Guid applicationId, ApplicationStatus status, Guid shelterId);
+    Task<ServiceResponse> UpdateStatus(Guid applicationId, ApplicationStatus status, Guid shelterId);
 }

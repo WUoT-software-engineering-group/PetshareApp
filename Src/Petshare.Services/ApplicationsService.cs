@@ -5,6 +5,8 @@ using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 using Petshare.Services.Abstract;
 using System.Data;
+using Petshare.CrossCutting.DTO.Announcement;
+using Petshare.CrossCutting.Utils;
 
 namespace Petshare.Services;
 
@@ -19,14 +21,14 @@ public class ApplicationsService : IApplicationsService
         _serviceWrapper = serviceWrapper;
     }
 
-    public async Task<Guid?> Create(Guid announcementId, Guid userId)
+    public async Task<ServiceResponse> Create(Guid announcementId, Guid userId)
     {
         var announcement = (await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.ID == announcementId)).FirstOrDefault();
         var user = (await _repositoryWrapper.AdopterRepository.FindByCondition(x => x.ID == userId)).FirstOrDefault();
 
         if (announcement is null || user is null)
         {
-            return null;
+            return ServiceResponse.BadRequest();
         }
 
         var applicationToAdd = new Application
@@ -38,10 +40,10 @@ public class ApplicationsService : IApplicationsService
         var application = await _repositoryWrapper.ApplicationsRepository.Create(applicationToAdd);
         await _repositoryWrapper.Save();
 
-        return application.ID;
+        return ServiceResponse.Created(application.ID);
     }
 
-    public async Task<List<ApplicationResponse>> GetAll(string role, Guid userId)
+    public async Task<ServiceResponse> GetAll(string role, Guid userId)
     {
         var applications = role switch
         {
@@ -51,35 +53,35 @@ public class ApplicationsService : IApplicationsService
             _ => throw new NotImplementedException(),
         };
 
-        return applications.Adapt<List<ApplicationResponse>>();
+        return ServiceResponse.Ok(applications.Adapt<List<ApplicationResponse>>());
     }
 
-    public async Task<List<ApplicationResponse>?> GetByAnnouncement(Guid announcementId, Guid shelterId)
+    public async Task<ServiceResponse> GetByAnnouncement(Guid announcementId, Guid shelterId)
     {
-        var announcement = await _serviceWrapper.AnnouncementService.GetById(announcementId);
+        var result = await _serviceWrapper.AnnouncementService.GetById(announcementId);
 
-        if (announcement is null || announcement.Author.ID != shelterId)
+        if (result.StatusCode.NotFound() || (result.Data as AnnouncementResponse)!.Author.ID != shelterId)
         {
-            return null;
+            return ServiceResponse.BadRequest();
         }
 
         var applications = await _repositoryWrapper.ApplicationsRepository.FindByCondition(x => x.Announcement.ID == announcementId);
 
-        return applications.Adapt<List<ApplicationResponse>>();
+        return ServiceResponse.Ok(applications.Adapt<List<ApplicationResponse>>());
     }
 
-    public async Task<bool> UpdateStatus(Guid applicationId, ApplicationStatus status, Guid shelterId)
+    public async Task<ServiceResponse> UpdateStatus(Guid applicationId, ApplicationStatus status, Guid shelterId)
     {
         var application = (await _repositoryWrapper.ApplicationsRepository.FindByCondition(x => x.ID == applicationId)).FirstOrDefault();
 
         if (application is null || application.Announcement.Author.ID != shelterId)
         {
-            return false;
+            return ServiceResponse.BadRequest();
         }
 
         application.Status = status;
         await _repositoryWrapper.Save();
 
-        return true;
+        return ServiceResponse.Ok();
     }
 }

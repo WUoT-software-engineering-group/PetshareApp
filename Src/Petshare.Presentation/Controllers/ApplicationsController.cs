@@ -28,11 +28,11 @@ public class ApplicationsController : ControllerBase
         if (adopterId is null)
             return Unauthorized();
 
-        var createdApplicationId = await _serviceWrapper.ApplicationsService.Create(announcementId, (Guid)adopterId);
+        var result = await _serviceWrapper.ApplicationsService.Create(announcementId, (Guid)adopterId);
 
-        return createdApplicationId is null
+        return result.StatusCode.BadRequest()
             ? BadRequest()
-            : Created(createdApplicationId.ToString(), null);
+            : Created(result.Data!.ToString(), null);
     }
 
     [HttpGet]
@@ -48,9 +48,9 @@ public class ApplicationsController : ControllerBase
             return Unauthorized();
         }
 
-        var applications = await _serviceWrapper.ApplicationsService.GetAll(role, (Guid)userId);
+        var result = await _serviceWrapper.ApplicationsService.GetAll(role, (Guid)userId);
 
-        return Ok(applications);
+        return Ok(result.Data);
     }
 
     [HttpGet("{announcementId}")]
@@ -65,14 +65,14 @@ public class ApplicationsController : ControllerBase
             return Unauthorized();
         }
 
-        var applications = await _serviceWrapper.ApplicationsService.GetByAnnouncement(announcementId, (Guid)shelterId);
+        var result = await _serviceWrapper.ApplicationsService.GetByAnnouncement(announcementId, (Guid)shelterId);
 
-        if (applications is null)
+        if (result.StatusCode.BadRequest())
         {
             return BadRequest();
         }
 
-        return Ok(applications);
+        return Ok(result.Data);
     }
 
     [HttpPut("{applicationId}/accept")]
@@ -87,10 +87,10 @@ public class ApplicationsController : ControllerBase
             return Unauthorized();
         }
 
-        var updateSuccessful = await _serviceWrapper.ApplicationsService.UpdateStatus(applicationId, ApplicationStatus.Accepted, (Guid)shelterId);
-        return !updateSuccessful
+        var result = await _serviceWrapper.ApplicationsService.UpdateStatus(applicationId, ApplicationStatus.Accepted, (Guid)shelterId);
+        return result.StatusCode.BadRequest()
             ? BadRequest()
-            : Ok(updateSuccessful);
+            : Ok();
     }
 
     [HttpPut("{applicationId}/reject")]
@@ -105,10 +105,10 @@ public class ApplicationsController : ControllerBase
             return Unauthorized();
         }
 
-        var updateSuccessful = await _serviceWrapper.ApplicationsService.UpdateStatus(applicationId, ApplicationStatus.Rejected, (Guid)shelterId);
-        return !updateSuccessful
+        var result = await _serviceWrapper.ApplicationsService.UpdateStatus(applicationId, ApplicationStatus.Rejected, (Guid)shelterId);
+        return result.StatusCode.BadRequest()
             ? BadRequest()
-            : Ok(updateSuccessful);
+            : Ok();
     }
 
     [HttpPut("{applicationId}/withdraw")]
@@ -123,10 +123,10 @@ public class ApplicationsController : ControllerBase
             return Unauthorized();
         }
 
-        var updateSuccessful = await _serviceWrapper.ApplicationsService.UpdateStatus(applicationId, ApplicationStatus.Withdrawn, (Guid)shelterId);
-        return !updateSuccessful
+        var result = await _serviceWrapper.ApplicationsService.UpdateStatus(applicationId, ApplicationStatus.Withdrawn, (Guid)shelterId);
+        return result.StatusCode.BadRequest()
             ? BadRequest()
-            : Ok(updateSuccessful);
+            : Ok();
     }
 }
 
