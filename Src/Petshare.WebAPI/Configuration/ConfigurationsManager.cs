@@ -17,7 +17,7 @@ public class ConfigurationsManager : IServicesConfiguration
         _authConfig = Configuration.GetRequiredSection(AuthConfig.SectionName).Get<AuthConfig>()!;
         _mailConfig = new MailConfig
         {
-            ApiKey = "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"
+            ApiKey = Configuration.GetValue<string>("SendGridAPIKey")!
         };
     }
 
