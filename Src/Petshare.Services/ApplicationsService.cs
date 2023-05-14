@@ -83,6 +83,10 @@ public class ApplicationsService : IApplicationsService
         application.LastUpdateDate = DateTime.Now;
         await _repositoryWrapper.Save();
 
+        if (status is ApplicationStatus.Accepted or ApplicationStatus.Rejected)
+            await _serviceWrapper.MailService.SendApplicationDecisionMail(application.Adopter.UserName,
+                application.Adopter.Email, status, application.Announcement.Pet.Name, application.Announcement.Pet.Breed);
+
         return ServiceResponse.Ok();
     }
 }

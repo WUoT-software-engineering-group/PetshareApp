@@ -13,4 +13,6 @@ public interface IServiceWrapper
     IApplicationsService ApplicationsService { get; }
 
     IFileService FileService { get; }
+
+    IMailService MailService { get; }
 }
