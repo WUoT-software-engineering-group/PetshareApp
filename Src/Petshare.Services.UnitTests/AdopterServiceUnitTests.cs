@@ -1,6 +1,7 @@
 ﻿using Petshare.CrossCutting.DTO.Address;
 using Petshare.CrossCutting.DTO.Adopter;
 using Petshare.CrossCutting.Enums;
+using Petshare.CrossCutting.Utils;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 
@@ -28,11 +29,14 @@ public class AdopterServiceUnitTests
 
         // Act
         var result = await adopterService.GetAll();
+        var resultData = result.Data as List<GetAdopterResponse>;
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<List<GetAdopterResponse>>(result);
-        Assert.Equal(5, result.Count);
+        Assert.True(result.StatusCode.Ok());
+        Assert.NotNull(resultData);
+        Assert.IsType<List<GetAdopterResponse>>(resultData);
+        Assert.Equal(5, resultData.Count);
     }
 
     [Fact]
@@ -64,23 +68,26 @@ public class AdopterServiceUnitTests
 
         // Act
         var result = await adopterService.GetById(adopterId);
+        var resultData = result.Data as GetAdopterResponse;
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<GetAdopterResponse>(result);
-        Assert.Equal(adopterId, result.ID);
-        Assert.Equal(adopter.UserName, result.UserName);
-        Assert.Equal(adopter.PhoneNumber, result.PhoneNumber);
-        Assert.Equal(adopter.Email, result.Email);
-        Assert.Equal(adopter.Address.Street, result.Address?.Street);
-        Assert.Equal(adopter.Address.City, result.Address?.City);
-        Assert.Equal(adopter.Address.Province, result.Address?.Province);
-        Assert.Equal(adopter.Address.Country, result.Address?.Country);
-        Assert.Equal(adopter.Address.PostalCode, result.Address?.PostalCode);
+        Assert.True(result.StatusCode.Ok());
+        Assert.NotNull(resultData);
+        Assert.IsType<GetAdopterResponse>(resultData);
+        Assert.Equal(adopterId, resultData.ID);
+        Assert.Equal(adopter.UserName, resultData.UserName);
+        Assert.Equal(adopter.PhoneNumber, resultData.PhoneNumber);
+        Assert.Equal(adopter.Email, resultData.Email);
+        Assert.Equal(adopter.Address.Street, resultData.Address?.Street);
+        Assert.Equal(adopter.Address.City, resultData.Address?.City);
+        Assert.Equal(adopter.Address.Province, resultData.Address?.Province);
+        Assert.Equal(adopter.Address.Country, resultData.Address?.Country);
+        Assert.Equal(adopter.Address.PostalCode, resultData.Address?.PostalCode);
     }
 
     [Fact]
-    public async void GetById_ReturnsNullIfNotFound()
+    public async void GetById_ReturnsNotFoundStatusIfAdopterNotFound()
     {
         // Arrange
         var repositoryWrapperMock = new Mock<IRepositoryWrapper>();
@@ -93,7 +100,9 @@ public class AdopterServiceUnitTests
         var result = await adopterService.GetById(Guid.NewGuid());
 
         // Assert
-        Assert.Null(result);
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.NotFound());
+        Assert.Null(result.Data);
     }
 
     [Fact]
@@ -123,14 +132,17 @@ public class AdopterServiceUnitTests
 
         // Act
         var result = await adopterService.Create(adopterToCreate);
+        var resultData = result.Data as Guid?;
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<Guid>(result);
+        Assert.True(result.StatusCode.Created());
+        Assert.NotNull(resultData);
+        Assert.IsType<Guid>(resultData);
     }
 
     [Fact]
-    public async void UpdateStatus_ReturnsTrueIfAdopterFound()
+    public async void UpdateStatus_ReturnsOkStatusIfAdopterFound()
     {
         // Arrange
         var adopterId = Guid.NewGuid();
@@ -149,11 +161,12 @@ public class AdopterServiceUnitTests
         var result = await adopterService.UpdateStatus(adopterId, adopterToUpdate);
 
         // Assert
-        Assert.True(result);
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.Ok());
     }
 
     [Fact]
-    public async void UpdateStatus_ReturnsFalseIfAdopterNotFound()
+    public async void UpdateStatus_ReturnsNotFoundStatusIfAdopterNotFound()
     {
         // Arrange
         var adopterId = Guid.NewGuid();
@@ -172,7 +185,8 @@ public class AdopterServiceUnitTests
         var result = await adopterService.UpdateStatus(adopterId, adopterToUpdate);
 
         // Assert
-        Assert.False(result);
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.NotFound());
     }
 
     [Fact]
@@ -195,9 +209,13 @@ public class AdopterServiceUnitTests
 
         // Act
         var result = await adopterService.CheckIfAdopterIsVerified(adopterId, shelterId);
+        var resultData = result.Data as bool?;
 
         // Assert
-        Assert.True(result);
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.Ok());
+        Assert.NotNull(resultData);
+        Assert.True(resultData);
     }
 
     [Fact]
@@ -215,8 +233,12 @@ public class AdopterServiceUnitTests
 
         // Act
         var result = await adopterService.CheckIfAdopterIsVerified(adopterId, shelterId);
+        var resultData = result.Data as bool?;
 
         // Assert
-        Assert.False(result);
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.Ok());
+        Assert.NotNull(resultData);
+        Assert.False(resultData);
     }
 }

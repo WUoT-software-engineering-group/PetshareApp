@@ -18,7 +18,7 @@ public class AnnouncementService : IAnnouncementService
         _repositoryWrapper = repositoryWrapper;
     }
 
-    public async Task<Guid?> Create(Guid shelterId, PostAnnouncementRequest announcement)
+    public async Task<ServiceResponse> Create(Guid shelterId, PostAnnouncementRequest announcement)
     {
         var announcementToCreate = announcement.Adapt<Announcement>();
         announcementToCreate.Status = AnnouncementStatus.Open;
@@ -26,7 +26,7 @@ public class AnnouncementService : IAnnouncementService
         var pet = (await _repositoryWrapper.PetRepository.FindByCondition(p => p.ID == announcement.PetId))
             .SingleOrDefault();
         if (pet == null || shelterId != pet.Shelter.ID)
-            return null;
+            return ServiceResponse.BadRequest();
 
         announcementToCreate.Pet = pet;
         announcementToCreate.Author = pet.Shelter;
@@ -34,44 +34,45 @@ public class AnnouncementService : IAnnouncementService
         var createdAnnouncement = await _repositoryWrapper.AnnouncementRepository.Create(announcementToCreate);
         await _repositoryWrapper.Save();
 
-        return createdAnnouncement.ID;
+        return ServiceResponse.Created(createdAnnouncement.ID);
     }
 
-    public async Task<bool> Update(Guid userId, string? role, Guid announcementId, PutAnnouncementRequest announcement)
+    public async Task<ServiceResponse> Update(Guid userId, string? role, Guid announcementId, PutAnnouncementRequest announcement)
     {
         var announcementToUpdate = (await _repositoryWrapper.AnnouncementRepository.FindByCondition(a => a.ID == announcementId))
             .SingleOrDefault();
 
         if (announcementToUpdate is null 
             || (role == "shelter" && announcementToUpdate.Author.ID != userId))
-            return false;
+            return ServiceResponse.BadRequest();
 
         announcementToUpdate = announcement.Adapt(announcementToUpdate);
+
         await _repositoryWrapper.AnnouncementRepository.Update(announcementToUpdate);
         await _repositoryWrapper.Save();
 
-        return true;
+        return ServiceResponse.Ok();
     }
 
-    public async Task<AnnouncementResponse?> GetById(Guid announcementId)
+    public async Task<ServiceResponse> GetById(Guid announcementId)
     {
         var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.ID == announcementId);
 
         if (announcements.SingleOrDefault() is not Announcement announcement)
         {
-            return null;
+            return ServiceResponse.NotFound();
         }
 
-        return announcement.Adapt<AnnouncementResponse>();
+        return ServiceResponse.Ok(announcement.Adapt<AnnouncementResponse>());
     }
 
-    public async Task<List<AnnouncementResponse>> GetByShelter(Guid shelterId)
+    public async Task<ServiceResponse> GetByShelter(Guid shelterId)
     {
         var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.Pet.Shelter.ID == shelterId);
-        return announcements.Adapt<List<AnnouncementResponse>>();
+        return ServiceResponse.Ok(announcements.Adapt<List<AnnouncementResponse>>());
     }
 
-    public async Task<List<AnnouncementResponse>> GetByFilters(GetAnnouncementsRequest filters)
+    public async Task<ServiceResponse> GetByFilters(GetAnnouncementsRequest filters)
     {
         Expression<Func<Announcement, bool>> condition = _ => true;
 
@@ -106,6 +107,6 @@ public class AnnouncementService : IAnnouncementService
         }
 
         var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(condition);
-        return announcements.Adapt<List<AnnouncementResponse>>();
+        return ServiceResponse.Ok(announcements.Adapt<List<AnnouncementResponse>>());
     }
 }

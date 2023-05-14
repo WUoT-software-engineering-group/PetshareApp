@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Petshare.CrossCutting.DTO.Shelter;
+using Petshare.CrossCutting.Utils;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
 using Petshare.Services.Abstract;
@@ -15,43 +16,45 @@ namespace Petshare.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<Guid> Create(PostShelterRequest shelter)
+        public async Task<ServiceResponse> Create(PostShelterRequest shelter)
         {
             var shelterToCreate = shelter.Adapt<Shelter>();
 
             var createdShelter = await _repositoryWrapper.ShelterRepository.Create(shelterToCreate);
             await _repositoryWrapper.Save();
 
-            return createdShelter.ID;
+            return ServiceResponse.Created(createdShelter.ID);
         }
 
-        public async Task<bool> Update(Guid id, PutShelterRequest shelter)
+        public async Task<ServiceResponse> Update(Guid id, PutShelterRequest shelter)
         {
             var shelterToUpdate = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == id))
                 .SingleOrDefault();
 
             if (shelterToUpdate is null)
-                return false;
+                return ServiceResponse.BadRequest();
 
             shelterToUpdate = shelter.Adapt(shelterToUpdate);
             await _repositoryWrapper.ShelterRepository.Update(shelterToUpdate);
             await _repositoryWrapper.Save();
 
-            return true;
+            return ServiceResponse.Ok();
         }
 
-        public async Task<List<ShelterResponse>> GetAll()
+        public async Task<ServiceResponse> GetAll()
         {
             var shelters = await _repositoryWrapper.ShelterRepository.FindAll();
 
-            return shelters.Adapt<List<ShelterResponse>>();
+            return ServiceResponse.Ok(shelters.Adapt<List<ShelterResponse>>());
         }
 
-        public async Task<ShelterResponse?> GetById(Guid id)
+        public async Task<ServiceResponse> GetById(Guid id)
         {
             var shelter = (await _repositoryWrapper.ShelterRepository.FindByCondition(s => s.ID == id)).SingleOrDefault();
 
-            return shelter?.Adapt<ShelterResponse>();
+            return shelter is not null
+                ? ServiceResponse.Ok(shelter.Adapt<ShelterResponse>())
+                : ServiceResponse.NotFound();
         }
     }
 }

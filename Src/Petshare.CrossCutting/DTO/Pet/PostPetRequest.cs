@@ -15,5 +15,7 @@ namespace Petshare.CrossCutting.DTO.Pet
         public string Description { get; set; } = default!;
 
         public Sex Sex { get; set; }
+
+        public string? PhotoUrl { get; set; } = default!;
     }
 }
