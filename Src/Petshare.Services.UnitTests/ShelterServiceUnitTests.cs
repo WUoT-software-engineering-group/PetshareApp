@@ -78,11 +78,11 @@ namespace Petshare.Services.UnitTests
             Assert.Equal(shelter.UserName, resultData.UserName);
             Assert.Equal(shelter.PhoneNumber, resultData.PhoneNumber);
             Assert.Equal(shelter.FullShelterName, resultData.FullShelterName);
-            Assert.Equal(shelter.Address.Street, resultData.Address.Street);
-            Assert.Equal(shelter.Address.City, resultData.Address.City);
-            Assert.Equal(shelter.Address.Province, resultData.Address.Province);
-            Assert.Equal(shelter.Address.Country, resultData.Address.Country);
-            Assert.Equal(shelter.Address.PostalCode, resultData.Address.PostalCode);
+            Assert.Equal(shelter.Address?.Street, resultData.Address.Street);
+            Assert.Equal(shelter.Address?.City, resultData.Address.City);
+            Assert.Equal(shelter.Address?.Province, resultData.Address.Province);
+            Assert.Equal(shelter.Address?.Country, resultData.Address.Country);
+            Assert.Equal(shelter.Address?.PostalCode, resultData.Address.PostalCode);
         }
 
         [Fact]
