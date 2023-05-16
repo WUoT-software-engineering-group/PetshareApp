@@ -79,11 +79,11 @@ public class AdopterServiceUnitTests
         Assert.Equal(adopter.UserName, resultData.UserName);
         Assert.Equal(adopter.PhoneNumber, resultData.PhoneNumber);
         Assert.Equal(adopter.Email, resultData.Email);
-        Assert.Equal(adopter.Address.Street, resultData.Address?.Street);
-        Assert.Equal(adopter.Address.City, resultData.Address?.City);
-        Assert.Equal(adopter.Address.Province, resultData.Address?.Province);
-        Assert.Equal(adopter.Address.Country, resultData.Address?.Country);
-        Assert.Equal(adopter.Address.PostalCode, resultData.Address?.PostalCode);
+        Assert.Equal(adopter.Address?.Street, resultData.Address?.Street);
+        Assert.Equal(adopter.Address?.City, resultData.Address?.City);
+        Assert.Equal(adopter.Address?.Province, resultData.Address?.Province);
+        Assert.Equal(adopter.Address?.Country, resultData.Address?.Country);
+        Assert.Equal(adopter.Address?.PostalCode, resultData.Address?.PostalCode);
     }
 
     [Fact]

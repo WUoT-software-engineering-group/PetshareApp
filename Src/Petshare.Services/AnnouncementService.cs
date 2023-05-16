@@ -78,7 +78,7 @@ public class AnnouncementService : IAnnouncementService
 
         if (!filters.Breeds.IsNullOrEmpty())
         {
-            condition = condition.And(a => filters.Breeds.Contains(a.Pet.Breed));
+            condition = condition.And(a => !string.IsNullOrEmpty(a.Pet.Breed) && filters.Breeds.Contains(a.Pet.Breed));
         }
 
         if (!filters.Species.IsNullOrEmpty())
@@ -88,7 +88,7 @@ public class AnnouncementService : IAnnouncementService
 
         if (!filters.Cities.IsNullOrEmpty())
         {
-            condition = condition.And(a => filters.Cities.Contains(a.Pet.Shelter.Address.City));
+            condition = condition.And(a => a.Pet.Shelter.Address != null && filters.Cities.Contains(a.Pet.Shelter.Address.City));
         }
 
         if (!filters.ShelterNames.IsNullOrEmpty())
