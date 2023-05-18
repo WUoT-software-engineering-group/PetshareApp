@@ -65,7 +65,7 @@ namespace Petshare.Presentation.Controllers
         [HttpPost("{petId}/photo")]
         [Authorize(Roles = "shelter")]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<PetResponse>> UploadPhoto(Guid petId, IFormFile file)
+        public async Task<ActionResult<PetResponse>> UploadPhoto(Guid petId, [FromForm]IFormFile file)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var shelterId = identity?.GetId();
