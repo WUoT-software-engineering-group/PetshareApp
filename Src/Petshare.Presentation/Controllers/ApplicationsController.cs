@@ -21,14 +21,14 @@ public class ApplicationsController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "adopter")]
-    public async Task<ActionResult> Create([FromBody] Guid announcementId)
+    public async Task<ActionResult> Create([FromBody] PostApplicationRequest request)
     {
         var identity = HttpContext.User.Identity as ClaimsIdentity;
         var adopterId = identity?.GetId();
         if (adopterId is null)
             return Unauthorized();
 
-        var result = await _serviceWrapper.ApplicationsService.Create(announcementId, (Guid)adopterId);
+        var result = await _serviceWrapper.ApplicationsService.Create(request.AnnouncementId, (Guid)adopterId);
 
         return result.StatusCode.BadRequest()
             ? BadRequest()
