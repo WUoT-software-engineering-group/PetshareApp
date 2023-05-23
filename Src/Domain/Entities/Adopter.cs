@@ -12,4 +12,6 @@ public class Adopter : User
     public virtual List<Announcement> FinalizedAnnouncements { get; set; } = new List<Announcement>();
     
     public AdopterStatus Status { get; set; } = AdopterStatus.Active;
+
+    public virtual List<Announcement> LikedAnnouncements { get; set; } = default!;
 }
