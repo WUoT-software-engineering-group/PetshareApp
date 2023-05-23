@@ -36,7 +36,12 @@ namespace Petshare.Presentation.Controllers
         [Authorize]
         public async Task<ActionResult<List<AnnouncementResponse>>> GetByFilters([FromQuery] GetAnnouncementsRequest filters)
         {
-            var result = await _serviceWrapper.AnnouncementService.GetByFilters(filters);
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var adopterId = identity?.GetRole() == "adopter"
+                ? identity.GetId()
+                : null;
+
+            var result = await _serviceWrapper.AnnouncementService.GetByFilters(filters, adopterId);
 
             return Ok(result.Data);
         }
@@ -70,6 +75,28 @@ namespace Petshare.Presentation.Controllers
             if ((await _serviceWrapper.AnnouncementService.Update((Guid)userId, identity?.GetRole() ,announcementId, announcement)).StatusCode.BadRequest())
                 return BadRequest();
             
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("{announcementId}/like")]
+        [Authorize(Roles = "adopter")]
+        public async Task<ActionResult> Like(Guid announcementId, [FromQuery] bool isLiked)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var adopterId = identity?.GetId();
+            if (adopterId is null)
+                return BadRequest();
+
+            var response =
+                await _serviceWrapper.AnnouncementService.UpdateLikedStatus(adopterId.Value, announcementId, isLiked);
+
+            if (response.StatusCode.BadRequest())
+                return BadRequest();
+
+            if (response.StatusCode.NotFound())
+                return NotFound();
+
             return Ok();
         }
     }

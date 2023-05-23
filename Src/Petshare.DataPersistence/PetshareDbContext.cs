@@ -26,7 +26,16 @@ namespace Petshare.DataPersistence
             modelBuilder.Entity<ShelterAdopterVerification>().ToTable("VerifiedAdopters");
             modelBuilder.Entity<ShelterAdopterVerification>()
                 .HasKey(shAd => new { shAd.ShelterID, shAd.AdopterID });
-            
+
+            modelBuilder.Entity<Adopter>()
+                .HasMany(ad => ad.LikedAnnouncements)
+                .WithMany(a => a.LikedBy)
+                .UsingEntity("LikedAnnouncements", j =>
+                {
+                    j.Property("LikedAnnouncementsID").HasColumnName("AnnouncementId");
+                    j.Property("LikedByID").HasColumnName("AdopterId");
+                });
+
             var cascadeFKs = modelBuilder.Model.GetEntityTypes()
                 .SelectMany(t => t.GetForeignKeys())
                 .Where(fk => fk is { IsOwnership: false, DeleteBehavior: DeleteBehavior.Cascade });

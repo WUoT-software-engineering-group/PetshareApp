@@ -72,7 +72,7 @@ public class AnnouncementService : IAnnouncementService
         return ServiceResponse.Ok(announcements.Adapt<List<AnnouncementResponse>>());
     }
 
-    public async Task<ServiceResponse> GetByFilters(GetAnnouncementsRequest filters)
+    public async Task<ServiceResponse> GetByFilters(GetAnnouncementsRequest filters, Guid? adopterId)
     {
         Expression<Func<Announcement, bool>> condition = _ => true;
 
@@ -106,7 +106,38 @@ public class AnnouncementService : IAnnouncementService
             condition = condition.And(a => a.Pet.Birthday.AddYears(filters.MaxAge.Value).CompareTo(DateTime.Now) >= 0);
         }
 
+        if (filters.IsLiked.HasValue && adopterId.HasValue)
+        {
+            condition = condition.And(a => a.LikedBy.Select(ad => ad.ID).Contains(adopterId.Value) == filters.IsLiked.Value);
+        }
+
         var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(condition);
-        return ServiceResponse.Ok(announcements.Adapt<List<AnnouncementResponse>>());
+        var likedByDict = announcements.ToDictionary(a => a.ID, a => a.LikedBy.Select(ad => ad.ID));
+
+        var result = announcements.Adapt<List<LikedAnnouncementResponse>>();
+        result.ForEach(a => a.IsLiked = adopterId.HasValue && likedByDict[a.ID].Contains(adopterId.Value));
+
+        return ServiceResponse.Ok(result);
+    }
+
+    public async Task<ServiceResponse> UpdateLikedStatus(Guid adopterId, Guid announcementId, bool isLiked)
+    {
+        var announcement = (await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.ID == announcementId)).SingleOrDefault();
+        if (announcement is null)
+            return ServiceResponse.NotFound();
+
+        var adopter = (await _repositoryWrapper.AdopterRepository.FindByCondition(x => x.ID == adopterId)).SingleOrDefault();
+        if (adopter is null)
+            return ServiceResponse.BadRequest();
+
+        if (isLiked)
+            adopter.LikedAnnouncements.Add(announcement);
+        else
+            adopter.LikedAnnouncements.Remove(announcement);
+
+        await _repositoryWrapper.AdopterRepository.Update(adopter);
+        await _repositoryWrapper.Save();
+
+        return ServiceResponse.Ok();
     }
 }

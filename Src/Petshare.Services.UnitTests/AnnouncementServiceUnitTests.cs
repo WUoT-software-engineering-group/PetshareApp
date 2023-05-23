@@ -333,7 +333,7 @@ public class AnnouncementServiceUnitTests
 
         var announcementService = new AnnouncementService(repositoryWrapperMock.Object);
 
-        var result = await announcementService.GetByFilters(filters);
+        var result = await announcementService.GetByFilters(filters, null);
         var filteredAnnouncements = result.Data as List<AnnouncementResponse>;
         var filteredIds = filteredAnnouncements?.Select(x => x.ID).ToList();
 
