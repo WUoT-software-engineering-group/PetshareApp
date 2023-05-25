@@ -11,7 +11,9 @@ public class ServiceWrapper : IServiceWrapper
     private IPetService? _petService;
     private IAnnouncementService? _announcementService;
     private IAdopterService? _adopterService;
+    private IApplicationsService? _applicationsService;
     private readonly Lazy<IFileService> _lazyFileService;
+    private readonly Lazy<IMailService> _lazyMailService;
 
     public IShelterService ShelterService
     {
@@ -48,13 +50,26 @@ public class ServiceWrapper : IServiceWrapper
             return _adopterService;
         }
     }
+    
+    public IApplicationsService ApplicationsService
+    {
+        get
+        {
+            _applicationsService ??= new ApplicationsService(_repositoryWrapper, this);
+            return _applicationsService;
+        }
+    }
 
     public IFileService FileService => _lazyFileService.Value;
+
+    public IMailService MailService => _lazyMailService.Value;
 
     public ServiceWrapper(IRepositoryWrapper repositoryWrapper, BlobServiceClient blobService, IServicesConfiguration configuration)
     {
         _repositoryWrapper = repositoryWrapper;
         _lazyFileService = new Lazy<IFileService>(() => 
             new FileService(blobService.GetBlobContainerClient(configuration.BlobContainerName)));
+        _lazyMailService = new Lazy<IMailService>(() =>
+            new MailService(configuration.MailApiKey, configuration.MailAddress, configuration.MailName));
     }
 }

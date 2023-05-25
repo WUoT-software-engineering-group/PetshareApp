@@ -22,23 +22,23 @@ namespace Petshare.Presentation.Controllers
         [Authorize]
         public async Task<ActionResult<AnnouncementResponse>> GetById(Guid announcementId)
         {
-            var announcement = await _serviceWrapper.AnnouncementService.GetById(announcementId);
+            var result = await _serviceWrapper.AnnouncementService.GetById(announcementId);
 
-            if (announcement is null)
+            if (result.StatusCode.NotFound())
             {
                 return NotFound();
             }
 
-            return Ok(announcement);
+            return Ok(result.Data);
         }
 
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<List<AnnouncementResponse>>> GetByFilters([FromQuery] GetAnnouncementsRequest filters)
         {
-            var announcements = await _serviceWrapper.AnnouncementService.GetByFilters(filters);
+            var result = await _serviceWrapper.AnnouncementService.GetByFilters(filters);
 
-            return Ok(announcements);
+            return Ok(result.Data);
         }
 
         [HttpPost]
@@ -50,11 +50,11 @@ namespace Petshare.Presentation.Controllers
             if (shelterId is null)
                 return BadRequest();
 
-            var createdAnnouncementId = await _serviceWrapper.AnnouncementService.Create((Guid)shelterId, announcement);
+            var result = await _serviceWrapper.AnnouncementService.Create((Guid)shelterId, announcement);
 
-            if (createdAnnouncementId == null)
+            if (result.StatusCode.BadRequest())
                 return BadRequest();
-            return Created(createdAnnouncementId.ToString(), null);
+            return Created(result.Data!.ToString(), null);
         }
 
         [HttpPut]
@@ -67,7 +67,7 @@ namespace Petshare.Presentation.Controllers
             if (userId is null)
                 return BadRequest();
 
-            if (!await _serviceWrapper.AnnouncementService.Update((Guid)userId, identity?.GetRole() ,announcementId, announcement))
+            if ((await _serviceWrapper.AnnouncementService.Update((Guid)userId, identity?.GetRole() ,announcementId, announcement)).StatusCode.BadRequest())
                 return BadRequest();
             
             return Ok();

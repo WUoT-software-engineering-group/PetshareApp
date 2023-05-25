@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Petshare.DataPersistence;
 
@@ -11,9 +12,11 @@ using Petshare.DataPersistence;
 namespace Petshare.DataPersistence.Migrations
 {
     [DbContext(typeof(PetshareDbContext))]
-    partial class PetshareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230511120853_application-entity-minor-changes")]
+    partial class applicationentityminorchanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -132,9 +135,11 @@ namespace Petshare.DataPersistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Breed")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -211,6 +216,7 @@ namespace Petshare.DataPersistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
@@ -356,6 +362,7 @@ namespace Petshare.DataPersistence.Migrations
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("Province")
+                                .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("Street")
@@ -383,7 +390,8 @@ namespace Petshare.DataPersistence.Migrations
                                 .HasForeignKey("UserID");
                         });
 
-                    b.Navigation("Address");
+                    b.Navigation("Address")
+                        .IsRequired();
 
                     b.Navigation("AnnouncementProvider")
                         .IsRequired();

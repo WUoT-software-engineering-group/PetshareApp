@@ -6,7 +6,7 @@ public class AddressRequest
 
     public string City { get; set; } = default!;
 
-    public string Province { get; set; } = default!;
+    public string? Province { get; set; }
 
     public string PostalCode { get; set; } = default!;
 

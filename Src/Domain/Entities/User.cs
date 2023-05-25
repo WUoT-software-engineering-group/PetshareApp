@@ -11,11 +11,11 @@ public abstract class User
 
     public string UserName { get; set; } = default!;
 
-    public string PhoneNumber { get; set; } = default!;
+    public string? PhoneNumber { get; set; }
 
     public string Email { get; set; } = default!;
 
-    public virtual Address Address { get; set; } = default!;
+    public virtual Address? Address { get; set; }
 
     public virtual AnnouncementProvider AnnouncementProvider { get; set; } = default!;
 }

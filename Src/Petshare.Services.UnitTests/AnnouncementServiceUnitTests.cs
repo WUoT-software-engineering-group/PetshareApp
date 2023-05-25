@@ -1,6 +1,6 @@
 ﻿using Petshare.CrossCutting.DTO.Announcement;
-using Petshare.CrossCutting.DTO.Pet;
 using Petshare.CrossCutting.Enums;
+using Petshare.CrossCutting.Utils;
 using Petshare.DataPersistence;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
@@ -45,14 +45,17 @@ public class AnnouncementServiceUnitTests
 
         // Act
         var result = await announcementService.Create(shelterMock.ID, announcementToCreate);
+        var resultData = result.Data as Guid?;
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<Guid>(result);
+        Assert.True(result.StatusCode.Created());
+        Assert.NotNull(resultData);
+        Assert.IsType<Guid>(resultData);
     }
 
     [Fact]
-    public async Task Create_ReturnsNullIfPetNotFound()
+    public async Task Create_ReturnsBadRequestStatusIfPetNotFound()
     {
         // Arrange
         var shelterMock = new Shelter
@@ -77,11 +80,12 @@ public class AnnouncementServiceUnitTests
         var result = await announcementService.Create(shelterMock.ID, announcementToCreate);
 
         // Assert
-        Assert.Null(result);
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.BadRequest());
     }
 
     [Fact]
-    public async Task Create_ReturnsNullIfPetShelterIdAndGivenShelterIdDontMatch()
+    public async Task Create_ReturnsBadRequestStatusIfPetShelterIdAndGivenShelterIdDontMatch()
     {
         // Arrange
         var shelterMock = new Shelter
@@ -114,11 +118,12 @@ public class AnnouncementServiceUnitTests
         var result = await announcementService.Create(Guid.NewGuid(), announcementToCreate);
 
         // Assert
-        Assert.Null(result);
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.BadRequest());
     }
 
     [Fact]
-    public async Task Create_ReturnsNullIfGivenAndShelterNotFound()
+    public async Task Create_ReturnsBadRequestStatusIfGivenAndShelterNotFound()
     {
         // Arrange
         var announcementToCreate = new PostAnnouncementRequest
@@ -148,11 +153,12 @@ public class AnnouncementServiceUnitTests
         var result = await announcementService.Create(Guid.NewGuid(), announcementToCreate);
 
         // Assert
-        Assert.Null(result);
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.BadRequest());
     }
 
     [Fact]
-    public async void Update_ReturnsTrueIfUpdated()
+    public async void Update_ReturnsOkStatusIfUpdated()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -172,17 +178,18 @@ public class AnnouncementServiceUnitTests
         var announcementService = new AnnouncementService(repositoryWrapperMock.Object);
 
         // Act
-        var result = 
-            await announcementService.Update(userId, "admin", announcementId, announcementToUpdateRequest)
-            &&
-            await announcementService.Update(userId, "shelter", announcementId, announcementToUpdateRequest);
+        var resultAdmin = await announcementService.Update(userId, "admin", announcementId, announcementToUpdateRequest);
+        var resultShelter = await announcementService.Update(userId, "shelter", announcementId, announcementToUpdateRequest);
 
         // Assert
-        Assert.True(result);
+        Assert.NotNull(resultAdmin);
+        Assert.NotNull(resultShelter);
+        Assert.True(resultAdmin.StatusCode.Ok());
+        Assert.True(resultShelter.StatusCode.Ok());
     }
     
     [Fact]
-    public async void Update_ReturnsFalseIfShelterIsNotAuthor()
+    public async void Update_ReturnsBadRequestStatusIfShelterIsNotAuthor()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -205,11 +212,12 @@ public class AnnouncementServiceUnitTests
         var result = await announcementService.Update(userId, "shelter", announcementId, announcementToUpdateRequest);
 
         // Assert
-        Assert.False(result);
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.BadRequest());
     }
 
     [Fact]
-    public async void Update_ReturnsFalseIfNotFound()
+    public async void Update_ReturnsBadRequestStatusIfNotFound()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -231,7 +239,8 @@ public class AnnouncementServiceUnitTests
         var result = await announcementService.Update(userId, "shelter", announcementId, announcementToUpdate);
 
         // Assert
-        Assert.False(result);
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.BadRequest());
     }
 
     [Fact]
@@ -271,23 +280,25 @@ public class AnnouncementServiceUnitTests
 
         // Act
         var result = await announcementService.GetById(announcementId);
+        var resultData = result.Data as AnnouncementResponse;
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<AnnouncementResponse>(result);
-        Assert.Equal(announcement.ID, result.ID);
-        Assert.Equal(announcement.ClosingDate, result.ClosingDate);
-        Assert.Equal(announcement.CreationDate, result.CreationDate);
-        Assert.Equal(announcement.Title, result.Title);
-        Assert.Equal(announcement.Description, result.Description);
-        Assert.Equal(announcement.Pet.ID, result.Pet.ID);
-        Assert.Equal(announcement.Author.ID, result.Author.ID);
-        Assert.Equal(announcement.LastUpdateDate, result.LastUpdateDate);
-        Assert.Equal(announcement.Status, result.Status);
+        Assert.True(result.StatusCode.Ok());
+        Assert.NotNull(resultData);
+        Assert.IsType<AnnouncementResponse>(resultData);
+        Assert.Equal(announcement.ID, resultData.ID);
+        Assert.Equal(announcement.ClosingDate, resultData.ClosingDate);
+        Assert.Equal(announcement.CreationDate, resultData.CreationDate);
+        Assert.Equal(announcement.Title, resultData.Title);
+        Assert.Equal(announcement.Description, resultData.Description);
+        Assert.Equal(announcement.Pet.ID, resultData.Pet.ID);
+        Assert.Equal(announcement.LastUpdateDate, resultData.LastUpdateDate);
+        Assert.Equal(announcement.Status, resultData.Status);
     }
 
     [Fact]
-    public async void GetById_ReturnsNull()
+    public async void GetById_ReturnsNotFoundStatusIfAnnouncementNotFound()
     {
         // Arrange
         var announcementId = Guid.NewGuid();
@@ -302,7 +313,9 @@ public class AnnouncementServiceUnitTests
         var result = await announcementService.GetById(announcementId);
 
         // Assert
-        Assert.Null(result);
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.NotFound());
+        Assert.Null(result.Data);
     }
 
     [Theory]
@@ -320,9 +333,13 @@ public class AnnouncementServiceUnitTests
 
         var announcementService = new AnnouncementService(repositoryWrapperMock.Object);
 
-        var filteredAnnouncements = await announcementService.GetByFilters(filters);
-        var filteredIds = filteredAnnouncements.Select(x => x.ID).ToList();
+        var result = await announcementService.GetByFilters(filters);
+        var filteredAnnouncements = result.Data as List<AnnouncementResponse>;
+        var filteredIds = filteredAnnouncements?.Select(x => x.ID).ToList();
 
-        Assert.True(filteredIds.SequenceEqual(expectedIds));
+        Assert.NotNull(result);
+        Assert.True(result.StatusCode.Ok());
+        Assert.NotNull(filteredAnnouncements);
+        Assert.True(filteredIds?.SequenceEqual(expectedIds));
     }
 }

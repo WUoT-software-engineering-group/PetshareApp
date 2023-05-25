@@ -8,12 +8,14 @@ namespace Petshare.CrossCutting.DTO.Pet
 
         public string Species { get; set; } = default!;
 
-        public string Breed { get; set; } = default!;
+        public Sex Sex { get; set; }
 
         public DateTime Birthday { get; set; }
 
-        public string Description { get; set; } = default!;
+        public string? Breed { get; set; }
 
-        public Sex Sex { get; set; }
+        public string? Description { get; set; }
+
+        public string? PhotoUrl { get; set; }
     }
 }

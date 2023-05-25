@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Net;
 using System.Security.Claims;
 
 namespace Petshare.CrossCutting.Utils
@@ -17,6 +18,7 @@ namespace Petshare.CrossCutting.Utils
             return Expression.Lambda<Func<T, bool>>(body, param);
         }
 
+        #region ClaimsIdentity Extensions
         public static Guid? GetId(this ClaimsIdentity identity)
         {
             if (Guid.TryParse(identity.FindFirst("db_id")?.Value, out var id))
@@ -25,5 +27,16 @@ namespace Petshare.CrossCutting.Utils
         }
 
         public static string? GetRole(this ClaimsIdentity identity) => identity.FindFirst(ClaimsIdentity.DefaultRoleClaimType)?.Value;
+        #endregion
+
+        #region HttpStatusCode Extensions
+        public static bool Ok(this HttpStatusCode statusCode) => statusCode == HttpStatusCode.OK;
+
+        public static bool Created(this HttpStatusCode statusCode) => statusCode == HttpStatusCode.Created;
+
+        public static bool NotFound(this HttpStatusCode statusCode) => statusCode == HttpStatusCode.NotFound;
+
+        public static bool BadRequest(this HttpStatusCode statusCode) => statusCode == HttpStatusCode.BadRequest;
+        #endregion
     }
 }

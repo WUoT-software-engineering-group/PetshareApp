@@ -9,5 +9,10 @@ public interface IServiceWrapper
     IAnnouncementService AnnouncementService { get; }
 
     IAdopterService AdopterService { get; }
+
+    IApplicationsService ApplicationsService { get; }
+
     IFileService FileService { get; }
+
+    IMailService MailService { get; }
 }

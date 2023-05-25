@@ -16,11 +16,11 @@ public class Pet
 
     public string Species { get; set; } = default!;
 
-    public string Breed { get; set; } = default!;
+    public string? Breed { get; set; }
 
     public DateTime Birthday { get; set; }
 
-    public string Description { get; set; } = default!;
+    public string? Description { get; set; }
 
     public string? PhotoUri { get; set; }
 

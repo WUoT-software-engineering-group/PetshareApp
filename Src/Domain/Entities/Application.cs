@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using Petshare.CrossCutting.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,11 +10,13 @@ public class Application
     [Key]
     public Guid ID { get; set; }
 
-    public virtual User User { get; set; } = default!;
+    public virtual Adopter Adopter { get; set; } = default!;
 
     public virtual Announcement Announcement { get; set; } = default!;
 
-    public DateTime DateOfApplication { get; set; }
+    public DateTime CreationDate { get; set; }
 
-    public bool IsWithdrawn { get; set; }
+    public DateTime LastUpdateDate { get; set; }
+
+    public ApplicationStatus Status { get; set; } = ApplicationStatus.Created;
 }

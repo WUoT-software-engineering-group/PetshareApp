@@ -23,11 +23,11 @@ namespace Petshare.Presentation.Controllers
         [Authorize]
         public async Task<ActionResult<PetResponse>> GetById(Guid petId)
         {
-            var pet = await _serviceWrapper.PetService.GetById(petId);
+            var result = await _serviceWrapper.PetService.GetById(petId);
 
-            return pet is null
+            return result.StatusCode.NotFound()
                 ? NotFound()
-                : Ok(pet);
+                : Ok(result.Data);
         }
 
         [HttpPost]
@@ -39,11 +39,11 @@ namespace Petshare.Presentation.Controllers
             if (shelterId is null)
                 return BadRequest();
 
-            var createdPetId = await _serviceWrapper.PetService.Create((Guid)shelterId, pet);
+            var result = await _serviceWrapper.PetService.Create((Guid)shelterId, pet);
 
-            return createdPetId is null
+            return result.StatusCode.BadRequest()
                 ? BadRequest()
-                : Created(createdPetId.ToString(), null);
+                : Created(result.Data!.ToString(), null);
         }
 
         [HttpPut("{petId}")]
@@ -55,17 +55,17 @@ namespace Petshare.Presentation.Controllers
             if (userId is null)
                 return BadRequest();
             
-            var updateSuccessful = await _serviceWrapper.PetService.Update((Guid)userId, identity?.GetRole(), petId, pet);
+            var result = await _serviceWrapper.PetService.Update((Guid)userId, identity?.GetRole(), petId, pet);
 
-            return !updateSuccessful
+            return result.StatusCode.BadRequest()
                 ? BadRequest()
-                : Ok(updateSuccessful);
+                : Ok();
         }
 
         [HttpPost("{petId}/photo")]
         [Authorize(Roles = "shelter")]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<PetResponse>> UploadPhoto(Guid petId, IFormFile file)
+        public async Task<ActionResult<PetResponse>> UploadPhoto(Guid petId, [FromForm]IFormFile file)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var shelterId = identity?.GetId();
@@ -74,11 +74,11 @@ namespace Petshare.Presentation.Controllers
 
             var photoUri = await _serviceWrapper.FileService.UploadFile(file.OpenReadStream(), file.FileName);
 
-            var updateSuccessful = await _serviceWrapper.PetService.UpdatePhotoUri(petId, (Guid)shelterId, photoUri);
+            var result = await _serviceWrapper.PetService.UpdatePhotoUri(petId, (Guid)shelterId, photoUri);
             
-            return !updateSuccessful
+            return result.StatusCode.BadRequest()
                 ? BadRequest()
-                : Ok(updateSuccessful);
+                : Ok();
         }
     }
 }

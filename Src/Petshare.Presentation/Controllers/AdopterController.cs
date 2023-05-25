@@ -22,9 +22,9 @@ public class AdopterController : ControllerBase
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<IEnumerable<GetAdopterResponse>>> GetAll()
     {
-        var adopters = await _serviceWrapper.AdopterService.GetAll();
+        var result = await _serviceWrapper.AdopterService.GetAll();
 
-        return Ok(adopters);
+        return Ok(result.Data);
     }
 
     [HttpGet]
@@ -36,19 +36,19 @@ public class AdopterController : ControllerBase
         if (identity?.GetRole() == "adopter" && identity.GetId() != adopterId)
             return Forbid();
 
-        var adopter = await _serviceWrapper.AdopterService.GetById(adopterId);
-        if (adopter == null)
+        var result = await _serviceWrapper.AdopterService.GetById(adopterId);
+        if (result.StatusCode.NotFound())
             return NotFound();
-        return Ok(adopter);
+        return Ok(result.Data);
     }
 
     [HttpPost]
     [Authorize]
     public async Task<ActionResult> Create([FromBody] PostAdopterRequest adopter)
     {
-        var createdAdopterId = await _serviceWrapper.AdopterService.Create(adopter);
+        var result = await _serviceWrapper.AdopterService.Create(adopter);
 
-        return Created(createdAdopterId.ToString(), null);
+        return Created(result.Data!.ToString(), null);
     }
 
     [HttpPut]
@@ -56,7 +56,7 @@ public class AdopterController : ControllerBase
     [Authorize(Roles = "admin")]
     public async Task<ActionResult> Update(Guid adopterId, [FromBody] PutAdopterRequest adopter)
     {
-        if (!await _serviceWrapper.AdopterService.UpdateStatus(adopterId, adopter))
+        if ((await _serviceWrapper.AdopterService.UpdateStatus(adopterId, adopter)).StatusCode.NotFound())
             return NotFound();
         return Ok();
     }
@@ -71,7 +71,14 @@ public class AdopterController : ControllerBase
         if (shelterId == null)
             return Forbid();
 
-        await _serviceWrapper.AdopterService.VerifyAdopterForShelter(adopterId, shelterId.Value);
+        var result = await _serviceWrapper.AdopterService.VerifyAdopterForShelter(adopterId, shelterId.Value);
+
+        if (result.StatusCode.NotFound())
+            return NotFound("Adopter doesn't exist");
+
+        if (result.StatusCode.BadRequest())
+            return BadRequest("Adopter already verified");
+
         return Ok();
     }
 
@@ -85,7 +92,7 @@ public class AdopterController : ControllerBase
         if (shelterId == null)
             return Forbid();
 
-        var isVerified = await _serviceWrapper.AdopterService.CheckIfAdopterIsVerified(adopterId, shelterId.Value);
-        return Ok(isVerified);
+        var result = await _serviceWrapper.AdopterService.CheckIfAdopterIsVerified(adopterId, shelterId.Value);
+        return Ok(result.Data);
     }
 }   

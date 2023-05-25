@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Petshare.DataPersistence;
 
@@ -11,9 +12,11 @@ using Petshare.DataPersistence;
 namespace Petshare.DataPersistence.Migrations
 {
     [DbContext(typeof(PetshareDbContext))]
-    partial class PetshareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230509173514_add-application-status")]
+    partial class addapplicationstatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,26 +101,23 @@ namespace Petshare.DataPersistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AdopterID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("AnnouncementID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastUpdateDate")
+                    b.Property<DateTime>("DateOfApplication")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("ID");
 
-                    b.HasIndex("AdopterID");
-
                     b.HasIndex("AnnouncementID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("Applications");
                 });
@@ -132,9 +132,11 @@ namespace Petshare.DataPersistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Breed")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -211,6 +213,7 @@ namespace Petshare.DataPersistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
@@ -308,21 +311,21 @@ namespace Petshare.DataPersistence.Migrations
 
             modelBuilder.Entity("Petshare.Domain.Entities.Application", b =>
                 {
-                    b.HasOne("Petshare.Domain.Entities.Adopter", "Adopter")
-                        .WithMany()
-                        .HasForeignKey("AdopterID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Petshare.Domain.Entities.Announcement", "Announcement")
                         .WithMany()
                         .HasForeignKey("AnnouncementID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Adopter");
+                    b.HasOne("Petshare.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Announcement");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Petshare.Domain.Entities.Pet", b =>
@@ -356,6 +359,7 @@ namespace Petshare.DataPersistence.Migrations
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("Province")
+                                .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("Street")
@@ -383,7 +387,8 @@ namespace Petshare.DataPersistence.Migrations
                                 .HasForeignKey("UserID");
                         });
 
-                    b.Navigation("Address");
+                    b.Navigation("Address")
+                        .IsRequired();
 
                     b.Navigation("AnnouncementProvider")
                         .IsRequired();
