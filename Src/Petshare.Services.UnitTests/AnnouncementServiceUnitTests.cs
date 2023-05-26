@@ -333,8 +333,8 @@ public class AnnouncementServiceUnitTests
 
         var announcementService = new AnnouncementService(repositoryWrapperMock.Object);
 
-        var result = await announcementService.GetByFilters(filters);
-        var filteredAnnouncements = result.Data as List<AnnouncementResponse>;
+        var result = await announcementService.GetByFilters(filters, null);
+        var filteredAnnouncements = result.Data as List<LikedAnnouncementResponse>;
         var filteredIds = filteredAnnouncements?.Select(x => x.ID).ToList();
 
         Assert.NotNull(result);

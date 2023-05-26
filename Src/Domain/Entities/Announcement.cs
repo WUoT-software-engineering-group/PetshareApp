@@ -25,6 +25,8 @@ public class Announcement
     public DateTime LastUpdateDate { get; set; } = DateTime.Now;
     
     public AnnouncementStatus Status { get; set; }
+
+    public virtual List<Adopter> LikedBy { get; set; } = default!;
 }
 
 public abstract class AdopterAnnouncement
