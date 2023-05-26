@@ -28,7 +28,8 @@ namespace Petshare.Services.UnitTests.TestData
                         Address = new() { City = "Warszawa" }
                     },
                     Birthday = DateTime.Parse("01-01-2011")
-                }
+                },
+                LikedBy = new ()
             },
             new()
             {
@@ -43,7 +44,8 @@ namespace Petshare.Services.UnitTests.TestData
                         Address = new() { City = "Lublin" }
                     },
                     Birthday = DateTime.Parse("01-01-2013")
-                }
+                },
+                LikedBy = new ()
             },
             new()
             {
@@ -58,7 +60,8 @@ namespace Petshare.Services.UnitTests.TestData
                         Address = new() { City = "Płock" }
                     },
                     Birthday = DateTime.Parse("01-01-2018")
-                }
+                },
+                LikedBy = new ()
             }
         };
 
