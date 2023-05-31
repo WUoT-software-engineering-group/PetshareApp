@@ -74,14 +74,14 @@ namespace Petshare.Presentation.Controllers
 
         [HttpGet("announcements")]
         [Authorize(Roles = "shelter")]
-        public async Task<ActionResult<PagedAnnouncementResponse>> GetAnnouncements([FromQuery] int pageNumber, [FromQuery] int pageSize)
+        public async Task<ActionResult<PagedAnnouncementResponse>> GetAnnouncements([FromQuery] int pageNumber, [FromQuery] int pageCount)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var shelterId = identity?.GetId();
             if (shelterId is null)
                 return BadRequest();
             
-            var result = await _serviceWrapper.AnnouncementService.GetByShelter((Guid)shelterId, pageNumber, pageSize);
+            var result = await _serviceWrapper.AnnouncementService.GetByShelter((Guid)shelterId, pageNumber, pageCount);
 
             return Ok(result.Data);
         }
