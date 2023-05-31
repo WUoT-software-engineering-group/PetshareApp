@@ -114,10 +114,10 @@ public class AnnouncementService : IAnnouncementService
         var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(condition);
         var likedByDict = announcements.ToDictionary(a => a.ID, a => a.LikedBy.Select(ad => ad.ID));
 
-        var result = announcements.Adapt<List<LikedAnnouncementResponse>>();
+        var result = announcements.Skip(filters.PageCount * filters.PageNumber).Take(filters.PageCount).Adapt<List<LikedAnnouncementResponse>>();
         result.ForEach(a => a.IsLiked = adopterId.HasValue && likedByDict[a.ID].Contains(adopterId.Value));
 
-        return ServiceResponse.Ok(result);
+        return ServiceResponse.Ok(new PagedAnnouncementResponse { Announcements = result, PageNumber = filters.PageNumber, Count = announcements.Count() });
     }
 
     public async Task<ServiceResponse> UpdateLikedStatus(Guid adopterId, Guid announcementId, bool isLiked)

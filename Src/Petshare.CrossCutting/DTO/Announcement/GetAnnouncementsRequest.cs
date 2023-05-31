@@ -9,5 +9,7 @@
         public int? MaxAge { get; set; }
         public List<string> ShelterNames { get; set; } = new();
         public bool? IsLiked { get; set; }
+        public int PageNumber { get; set; } = 0;
+        public int PageCount { get; set; } = 10;
     }
 }
