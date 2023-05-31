@@ -66,10 +66,16 @@ public class AnnouncementService : IAnnouncementService
         return ServiceResponse.Ok(announcement.Adapt<AnnouncementResponse>());
     }
 
-    public async Task<ServiceResponse> GetByShelter(Guid shelterId)
+    public async Task<ServiceResponse> GetByShelter(Guid shelterId, int pageNumber, int pageSize)
     {
         var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.Pet.Shelter.ID == shelterId);
-        return ServiceResponse.Ok(announcements.Adapt<List<AnnouncementResponse>>());
+        var pagedResult = new PagedAnnouncementResponse
+        {
+            Announcements = announcements.Skip(pageSize * pageNumber).Take(pageSize).Adapt<List<LikedAnnouncementResponse>>(),
+            Count = announcements.Count(),
+            PageNumber = pageNumber
+        };
+        return ServiceResponse.Ok(pagedResult);
     }
 
     public async Task<ServiceResponse> GetByFilters(GetAnnouncementsRequest filters, Guid? adopterId)
@@ -114,10 +120,10 @@ public class AnnouncementService : IAnnouncementService
         var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(condition);
         var likedByDict = announcements.ToDictionary(a => a.ID, a => a.LikedBy.Select(ad => ad.ID));
 
-        var result = announcements.Adapt<List<LikedAnnouncementResponse>>();
+        var result = announcements.Skip(filters.PageCount * filters.PageNumber).Take(filters.PageCount).Adapt<List<LikedAnnouncementResponse>>();
         result.ForEach(a => a.IsLiked = adopterId.HasValue && likedByDict[a.ID].Contains(adopterId.Value));
 
-        return ServiceResponse.Ok(result);
+        return ServiceResponse.Ok(new PagedAnnouncementResponse { Announcements = result, PageNumber = filters.PageNumber, Count = announcements.Count() });
     }
 
     public async Task<ServiceResponse> UpdateLikedStatus(Guid adopterId, Guid announcementId, bool isLiked)
