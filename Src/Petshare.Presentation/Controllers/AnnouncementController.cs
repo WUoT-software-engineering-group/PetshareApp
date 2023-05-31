@@ -34,7 +34,7 @@ namespace Petshare.Presentation.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<List<AnnouncementResponse>>> GetByFilters([FromQuery] GetAnnouncementsRequest filters)
+        public async Task<ActionResult<PagedAnnouncementResponse>> GetByFilters([FromQuery] GetAnnouncementsRequest filters)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var adopterId = identity?.GetRole() == "adopter"
