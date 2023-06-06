@@ -11,7 +11,9 @@ public interface IAnnouncementService
 
     Task<ServiceResponse> GetById(Guid announcementId);
 
-    Task<ServiceResponse> GetByShelter(Guid shelterId);
+    Task<ServiceResponse> GetByShelter(Guid shelterId, int pageNumber, int pageSize);
 
-    Task<ServiceResponse> GetByFilters(GetAnnouncementsRequest filters);
+    Task<ServiceResponse> GetByFilters(GetAnnouncementsRequest filters, Guid? adopterId);
+
+    Task<ServiceResponse> UpdateLikedStatus(Guid adopterId, Guid announcementId, bool isLiked);
 }
