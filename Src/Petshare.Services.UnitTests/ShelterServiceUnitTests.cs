@@ -27,14 +27,16 @@ namespace Petshare.Services.UnitTests
             var shelterService = new ShelterService(repositoryWrapperMock.Object);
 
             // Act
-            var result = await shelterService.GetAll();
-            var resultData = result.Data as List<ShelterResponse>;
+            var pageSize = 2;
+            var result = await shelterService.GetAll(1, pageSize);
+            var resultData = result.Data as PagedShelterResponse;
 
             // Assert
             Assert.NotNull(result);
             Assert.True(result.StatusCode.Ok());
             Assert.NotNull(resultData);
-            Assert.IsType<List<ShelterResponse>>(resultData);
+            Assert.IsType<List<ShelterResponse>>(resultData.Shelters);
+            Assert.Equal(pageSize, resultData.Shelters.Count);
             Assert.Equal(5, resultData.Count);
         }
 

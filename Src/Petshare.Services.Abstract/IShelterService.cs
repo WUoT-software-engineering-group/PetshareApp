@@ -9,7 +9,7 @@ namespace Petshare.Services.Abstract
 
         Task<ServiceResponse> Update(Guid id, PutShelterRequest shelter);
 
-        Task<ServiceResponse> GetAll();
+        Task<ServiceResponse> GetAll(int pageNumber, int pageSize);
 
         Task<ServiceResponse> GetById(Guid id);
     }

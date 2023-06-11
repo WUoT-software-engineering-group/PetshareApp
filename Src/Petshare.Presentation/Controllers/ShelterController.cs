@@ -22,9 +22,9 @@ namespace Petshare.Presentation.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<ShelterResponse>>> GetAll()
+        public async Task<ActionResult<PagedShelterResponse>> GetAll([FromQuery] int pageNumber, [FromQuery] int pageCount)
         {
-            var result = await _serviceWrapper.ShelterService.GetAll();
+            var result = await _serviceWrapper.ShelterService.GetAll(pageNumber, pageCount);
 
             return Ok(result.Data);
         }
