@@ -1,3 +1,4 @@
+using System.Drawing.Printing;
 using System.Net;
 using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.DTO.Applications;
@@ -114,16 +115,18 @@ public class ApplicationsServiceUnitTests
         var serviceWrapperMock = new Mock<IServiceWrapper>();
         
         var applicationsService = new ApplicationsService(repositoryWrapperMock.Object, serviceWrapperMock.Object);
-     
+
         // Act
-        var result = await applicationsService.GetAll("admin", adminId);
-        var resultData = result.Data as List<ApplicationResponse>;
+        var pageSize = 2;
+        var result = await applicationsService.GetAll("admin", adminId, 1, pageSize);
+        var resultData = result.Data as PagedApplicationResponse;
         
         // Assert
         Assert.NotNull(result);
         Assert.True(result.StatusCode.Ok());
         Assert.NotNull(resultData);
-        Assert.IsType<List<ApplicationResponse>>(resultData);
+        Assert.IsType<List<ApplicationResponse>>(resultData.Applications);
+        Assert.Equal(pageSize, resultData.Applications.Count);
         Assert.Equal(5, resultData.Count);
     }
     
@@ -152,14 +155,16 @@ public class ApplicationsServiceUnitTests
         var applicationsService = new ApplicationsService(repositoryWrapperMock.Object, serviceWrapperMock.Object);
      
         // Act
-        var result = await applicationsService.GetAll("adopter", adopterId);
-        var resultData = result.Data as List<ApplicationResponse>;
-        
+        var pageSize = 2;
+        var result = await applicationsService.GetAll("adopter", adopterId, 1, pageSize);
+        var resultData = result.Data as PagedApplicationResponse;
+
         // Assert
         Assert.NotNull(result);
         Assert.True(result.StatusCode.Ok());
         Assert.NotNull(resultData);
-        Assert.IsType<List<ApplicationResponse>>(resultData);
+        Assert.IsType<List<ApplicationResponse>>(resultData.Applications);
+        Assert.Equal(pageSize, resultData.Applications.Count);
         Assert.Equal(4, resultData.Count);
     }
     
@@ -186,16 +191,18 @@ public class ApplicationsServiceUnitTests
         var serviceWrapperMock = new Mock<IServiceWrapper>();
         
         var applicationsService = new ApplicationsService(repositoryWrapperMock.Object, serviceWrapperMock.Object);
-     
+
         // Act
-        var result = await applicationsService.GetAll("shelter", shelterId);
-        var resultData = result.Data as List<ApplicationResponse>;
-        
+        var pageSize = 2;
+        var result = await applicationsService.GetAll("shelter", shelterId, 1, pageSize);
+        var resultData = result.Data as PagedApplicationResponse;
+
         // Assert
         Assert.NotNull(result);
         Assert.True(result.StatusCode.Ok());
         Assert.NotNull(resultData);
-        Assert.IsType<List<ApplicationResponse>>(resultData);
+        Assert.IsType<List<ApplicationResponse>>(resultData.Applications);
+        Assert.Equal(pageSize, resultData.Applications.Count);
         Assert.Equal(4, resultData.Count);
     }
     
@@ -210,7 +217,7 @@ public class ApplicationsServiceUnitTests
         var applicationsService = new ApplicationsService(repositoryWrapperMock.Object, serviceWrapperMock.Object);
         
         // Assert
-        await Assert.ThrowsAsync<NotImplementedException>(async () => await applicationsService.GetAll("unknown role", Guid.NewGuid()));
+        await Assert.ThrowsAsync<NotImplementedException>(async () => await applicationsService.GetAll("unknown role", Guid.NewGuid(), 1, 2));
     }
 
     [Fact]
@@ -244,16 +251,18 @@ public class ApplicationsServiceUnitTests
                 })));
         
         var applicationsService = new ApplicationsService(repositoryWrapperMock.Object, serviceWrapperMock.Object);
-     
+
         // Act
-        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId);
-        var resultData = result.Data as List<ApplicationResponse>;
+        var pageSize = 2;
+        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId, 1, pageSize);
+        var resultData = result.Data as PagedApplicationResponse;
         
         // Assert
         Assert.NotNull(result);
         Assert.True(result.StatusCode.Ok());
         Assert.NotNull(resultData);
-        Assert.IsType<List<ApplicationResponse>>(resultData);
+        Assert.IsType<List<ApplicationResponse>>(resultData.Applications);
+        Assert.Equal(pageSize, resultData.Applications.Count);
         Assert.Equal(4, resultData.Count);
     }
     
@@ -273,7 +282,7 @@ public class ApplicationsServiceUnitTests
         var applicationsService = new ApplicationsService(repositoryWrapperMock.Object, serviceWrapperMock.Object);
      
         // Act
-        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId);
+        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId, 1, 2);
         
         // Assert
         Assert.NotNull(result);
@@ -302,7 +311,7 @@ public class ApplicationsServiceUnitTests
         var applicationsService = new ApplicationsService(repositoryWrapperMock.Object, serviceWrapperMock.Object);
      
         // Act
-        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId);
+        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId, 1, 2);
         
         // Assert
         Assert.NotNull(result);
