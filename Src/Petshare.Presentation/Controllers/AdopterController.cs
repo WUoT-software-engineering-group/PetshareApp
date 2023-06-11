@@ -20,9 +20,9 @@ public class AdopterController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "admin")]
-    public async Task<ActionResult<IEnumerable<GetAdopterResponse>>> GetAll()
+    public async Task<ActionResult<PagedAdopterResponse>> GetAll([FromQuery] int pageNumber, [FromQuery] int pageCount)
     {
-        var result = await _serviceWrapper.AdopterService.GetAll();
+        var result = await _serviceWrapper.AdopterService.GetAll(pageNumber, pageCount);
 
         return Ok(result.Data);
     }
