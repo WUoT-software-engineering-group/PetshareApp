@@ -13,6 +13,6 @@ namespace Petshare.Services.Abstract
 
         Task<ServiceResponse> GetById(Guid petId);
 
-        Task<ServiceResponse> GetByShelter(Guid shelterId);
+        Task<ServiceResponse> GetByShelter(Guid shelterId, int pageNumber, int pageSize);
     }
 }

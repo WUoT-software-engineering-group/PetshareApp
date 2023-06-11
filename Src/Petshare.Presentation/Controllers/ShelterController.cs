@@ -60,14 +60,14 @@ namespace Petshare.Presentation.Controllers
 
         [HttpGet("pets")]
         [Authorize(Roles = "shelter")]
-        public async Task<ActionResult<IEnumerable<PetResponse>>> GetPets()
+        public async Task<ActionResult<PagedPetResponse>> GetPets([FromQuery] int pageNumber, [FromQuery] int pageCount)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var shelterId = identity?.GetId();
             if (shelterId is null)
                 return BadRequest();
             
-            var result = await _serviceWrapper.PetService.GetByShelter((Guid)shelterId);
+            var result = await _serviceWrapper.PetService.GetByShelter((Guid)shelterId, pageNumber, pageCount);
 
             return Ok(result.Data);
         }
