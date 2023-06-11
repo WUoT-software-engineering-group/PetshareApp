@@ -141,18 +141,20 @@ namespace Petshare.Services.UnitTests
                 .Returns(Task.FromResult(pets));
         
             var petService = new PetService(repositoryWrapperMock.Object);
-        
+
             // Act
-            var result = await petService.GetByShelter(shelterId);
-            var resultData = result.Data as List<PetResponse>;
+            var pageSize = 2;
+            var result = await petService.GetByShelter(shelterId, 1, pageSize);
+            var resultData = result.Data as PagedPetResponse;
         
             // Assert
             Assert.NotNull(result);
             Assert.True(result.StatusCode.Ok());
             Assert.NotNull(resultData);
-            Assert.IsType<List<PetResponse>>(resultData);
+            Assert.IsType<List<PetResponse>>(resultData.Pets);
+            Assert.Equal(pageSize, resultData.Pets.Count);
             Assert.Equal(5, resultData.Count);
-            Assert.True(resultData.All(x => x.Shelter.ID == shelterId));
+            Assert.True(resultData.Pets.All(x => x.Shelter.ID == shelterId));
         }
 
         [Fact]

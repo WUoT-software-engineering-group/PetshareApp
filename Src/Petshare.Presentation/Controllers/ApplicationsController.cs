@@ -37,7 +37,7 @@ public class ApplicationsController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<IEnumerable<ApplicationResponse>>> GetAll()
+    public async Task<ActionResult<PagedApplicationResponse>> GetAll([FromQuery] int pageNumber, [FromQuery] int pageCount)
     {
         var identity = HttpContext.User.Identity as ClaimsIdentity;
         var role = identity?.GetRole();
@@ -48,14 +48,14 @@ public class ApplicationsController : ControllerBase
             return Unauthorized();
         }
 
-        var result = await _serviceWrapper.ApplicationsService.GetAll(role, (Guid)userId);
+        var result = await _serviceWrapper.ApplicationsService.GetAll(role, (Guid)userId, pageNumber, pageCount);
 
         return Ok(result.Data);
     }
 
     [HttpGet("{announcementId}")]
     [Authorize(Roles = "shelter")]
-    public async Task<ActionResult<IEnumerable<ApplicationResponse>>> GetByAnnouncement(Guid announcementId)
+    public async Task<ActionResult<PagedApplicationResponse>> GetByAnnouncement(Guid announcementId, [FromQuery] int pageNumber, [FromQuery] int pageCount)
     {
         var identity = HttpContext.User.Identity as ClaimsIdentity;
         var shelterId = identity?.GetId();
@@ -65,7 +65,7 @@ public class ApplicationsController : ControllerBase
             return Unauthorized();
         }
 
-        var result = await _serviceWrapper.ApplicationsService.GetByAnnouncement(announcementId, (Guid)shelterId);
+        var result = await _serviceWrapper.ApplicationsService.GetByAnnouncement(announcementId, (Guid)shelterId, pageNumber, pageCount);
 
         if (result.StatusCode.BadRequest())
         {

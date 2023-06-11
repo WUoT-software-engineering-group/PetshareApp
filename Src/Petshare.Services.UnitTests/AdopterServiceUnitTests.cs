@@ -4,6 +4,7 @@ using Petshare.CrossCutting.Enums;
 using Petshare.CrossCutting.Utils;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
+using System.Drawing.Printing;
 
 namespace Petshare.Services.UnitTests;
 
@@ -28,14 +29,16 @@ public class AdopterServiceUnitTests
         var adopterService = new AdopterService(repositoryWrapperMock.Object);
 
         // Act
-        var result = await adopterService.GetAll();
-        var resultData = result.Data as List<GetAdopterResponse>;
+        var pageSize = 2;
+        var result = await adopterService.GetAll(1, pageSize);
+        var resultData = result.Data as PagedAdopterResponse;
 
         // Assert
         Assert.NotNull(result);
         Assert.True(result.StatusCode.Ok());
         Assert.NotNull(resultData);
-        Assert.IsType<List<GetAdopterResponse>>(resultData);
+        Assert.IsType<List<GetAdopterResponse>>(resultData.Adopters);
+        Assert.Equal(pageSize, resultData.Adopters.Count);
         Assert.Equal(5, resultData.Count);
     }
 

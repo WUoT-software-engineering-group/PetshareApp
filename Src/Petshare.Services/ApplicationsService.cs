@@ -7,6 +7,7 @@ using Petshare.Services.Abstract;
 using System.Data;
 using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.Utils;
+using Petshare.CrossCutting.DTO.Shelter;
 
 namespace Petshare.Services;
 
@@ -43,7 +44,7 @@ public class ApplicationsService : IApplicationsService
         return ServiceResponse.Created(application.ID);
     }
 
-    public async Task<ServiceResponse> GetAll(string role, Guid userId)
+    public async Task<ServiceResponse> GetAll(string role, Guid userId, int pageNumber, int pageSize)
     {
         var applications = role switch
         {
@@ -53,10 +54,15 @@ public class ApplicationsService : IApplicationsService
             _ => throw new NotImplementedException(),
         };
 
-        return ServiceResponse.Ok(applications.Adapt<List<ApplicationResponse>>());
+        return ServiceResponse.Ok(new PagedApplicationResponse
+        {
+            Applications = applications.Skip(pageNumber * pageSize).Take(pageSize).Adapt<List<ApplicationResponse>>(),
+            PageNumber = pageNumber,
+            Count = applications.Count()
+        });
     }
 
-    public async Task<ServiceResponse> GetByAnnouncement(Guid announcementId, Guid shelterId)
+    public async Task<ServiceResponse> GetByAnnouncement(Guid announcementId, Guid shelterId, int pageNumber, int pageSize)
     {
         var result = await _serviceWrapper.AnnouncementService.GetById(announcementId);
 
@@ -67,7 +73,12 @@ public class ApplicationsService : IApplicationsService
 
         var applications = await _repositoryWrapper.ApplicationsRepository.FindByCondition(x => x.Announcement.ID == announcementId);
 
-        return ServiceResponse.Ok(applications.Adapt<List<ApplicationResponse>>());
+        return ServiceResponse.Ok(new PagedApplicationResponse
+        {
+            Applications = applications.Skip(pageNumber * pageSize).Take(pageSize).Adapt<List<ApplicationResponse>>(),
+            PageNumber = pageNumber,
+            Count = applications.Count()
+        });
     }
 
     public async Task<ServiceResponse> UpdateStatus(Guid applicationId, ApplicationStatus status, Guid shelterId)

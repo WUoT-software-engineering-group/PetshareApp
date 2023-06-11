@@ -41,11 +41,16 @@ namespace Petshare.Services
             return ServiceResponse.Ok();
         }
 
-        public async Task<ServiceResponse> GetAll()
+        public async Task<ServiceResponse> GetAll(int pageNumber, int pageSize)
         {
             var shelters = await _repositoryWrapper.ShelterRepository.FindAll();
 
-            return ServiceResponse.Ok(shelters.Adapt<List<ShelterResponse>>());
+            return ServiceResponse.Ok(new PagedShelterResponse
+            {
+                Shelters = shelters.Skip(pageNumber * pageSize).Take(pageSize).Adapt<List<ShelterResponse>>(),
+                PageNumber = pageNumber,
+                Count = shelters.Count()
+            });
         }
 
         public async Task<ServiceResponse> GetById(Guid id)

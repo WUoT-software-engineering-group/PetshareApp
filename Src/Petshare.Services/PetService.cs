@@ -74,11 +74,17 @@ namespace Petshare.Services
                 : ServiceResponse.NotFound();
         }
 
-        public async Task<ServiceResponse> GetByShelter(Guid shelterId)
+        public async Task<ServiceResponse> GetByShelter(Guid shelterId, int pageNumber, int pageSize)
         {
             var petsByShelter = await _repositoryWrapper.PetRepository
                 .FindByCondition(x => x.Shelter.ID == shelterId);
-            return ServiceResponse.Ok(petsByShelter.ToList().Adapt<List<PetResponse>>());
+
+            return ServiceResponse.Ok(new PagedPetResponse
+            {
+                Pets = petsByShelter.Skip(pageNumber * pageSize).Take(pageSize).ToList().Adapt<List<PetResponse>>(),
+                PageNumber = pageNumber,
+                Count = petsByShelter.Count()
+            });
         }
     }
 }

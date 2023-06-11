@@ -5,7 +5,7 @@ namespace Petshare.Services.Abstract;
 
 public interface IAdopterService
 {
-    Task<ServiceResponse> GetAll();
+    Task<ServiceResponse> GetAll(int pageNumber, int pageSize);
 
     Task<ServiceResponse> GetById(Guid id);
 

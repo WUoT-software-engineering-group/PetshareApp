@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Petshare.CrossCutting.DTO.Adopter;
+using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.CrossCutting.Utils;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
@@ -16,11 +17,16 @@ public class AdopterService : IAdopterService
         _repositoryWrapper = repositoryWrapper;
     }
 
-    public async Task<ServiceResponse> GetAll()
+    public async Task<ServiceResponse> GetAll(int pageNumber, int pageSize)
     {
         var adopters = await _repositoryWrapper.AdopterRepository.FindAll();
 
-        return ServiceResponse.Ok(adopters.Adapt<List<GetAdopterResponse>>());
+        return ServiceResponse.Ok(new PagedAdopterResponse
+        {
+            Adopters = adopters.Skip(pageNumber * pageSize).Take(pageSize).Adapt<List<GetAdopterResponse>>(),
+            PageNumber = pageNumber,
+            Count = adopters.Count()
+        });
     }
 
     public async Task<ServiceResponse> GetById(Guid id)
