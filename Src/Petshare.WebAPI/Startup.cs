@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs;
+﻿using System.Text.Json.Serialization;
+using Azure.Storage.Blobs;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -39,7 +40,11 @@ namespace Petshare.WebAPI
             services.AddScoped<IMapper, ServiceMapper>();
 
             services.AddControllers()
-                .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
+                .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly)
+                .AddJsonOptions(o =>
+                {
+                    o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
 
             services.AddAuthentication(options =>
             {
