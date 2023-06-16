@@ -1,11 +1,12 @@
-﻿using Petshare.CrossCutting.DTO.Adopter;
+﻿using Petshare.CrossCutting.DTO;
+using Petshare.CrossCutting.DTO.Adopter;
 using Petshare.CrossCutting.Utils;
 
 namespace Petshare.Services.Abstract;
 
 public interface IAdopterService
 {
-    Task<ServiceResponse> GetAll(int pageNumber, int pageSize);
+    Task<ServiceResponse> GetAll(PagingRequest pagingRequest);
 
     Task<ServiceResponse> GetById(Guid id);
 

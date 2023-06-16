@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Petshare.CrossCutting.DTO;
 using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.DTO.Pet;
 using Petshare.CrossCutting.DTO.Shelter;
@@ -22,9 +23,9 @@ namespace Petshare.Presentation.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<PagedShelterResponse>> GetAll([FromQuery] int pageNumber, [FromQuery] int pageCount)
+        public async Task<ActionResult<PagedShelterResponse>> GetAll([FromQuery] PagingRequest pagingRequest)
         {
-            var result = await _serviceWrapper.ShelterService.GetAll(pageNumber, pageCount);
+            var result = await _serviceWrapper.ShelterService.GetAll(pagingRequest);
 
             return Ok(result.Data);
         }
@@ -60,28 +61,28 @@ namespace Petshare.Presentation.Controllers
 
         [HttpGet("pets")]
         [Authorize(Roles = "shelter")]
-        public async Task<ActionResult<PagedPetResponse>> GetPets([FromQuery] int pageNumber, [FromQuery] int pageCount)
+        public async Task<ActionResult<PagedPetResponse>> GetPets([FromQuery] PagingRequest pagingRequest)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var shelterId = identity?.GetId();
             if (shelterId is null)
                 return BadRequest();
             
-            var result = await _serviceWrapper.PetService.GetByShelter((Guid)shelterId, pageNumber, pageCount);
+            var result = await _serviceWrapper.PetService.GetByShelter((Guid)shelterId, pagingRequest);
 
             return Ok(result.Data);
         }
 
         [HttpGet("announcements")]
         [Authorize(Roles = "shelter")]
-        public async Task<ActionResult<PagedAnnouncementResponse>> GetAnnouncements([FromQuery] int pageNumber, [FromQuery] int pageCount)
+        public async Task<ActionResult<PagedAnnouncementResponse>> GetAnnouncements([FromQuery] PagingRequest pagingRequest)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var shelterId = identity?.GetId();
             if (shelterId is null)
                 return BadRequest();
             
-            var result = await _serviceWrapper.AnnouncementService.GetByShelter((Guid)shelterId, pageNumber, pageCount);
+            var result = await _serviceWrapper.AnnouncementService.GetByShelter((Guid)shelterId, pagingRequest);
 
             return Ok(result.Data);
         }

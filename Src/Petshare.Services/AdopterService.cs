@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Petshare.CrossCutting.DTO;
 using Petshare.CrossCutting.DTO.Adopter;
 using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.CrossCutting.Utils;
@@ -17,14 +18,14 @@ public class AdopterService : IAdopterService
         _repositoryWrapper = repositoryWrapper;
     }
 
-    public async Task<ServiceResponse> GetAll(int pageNumber, int pageSize)
+    public async Task<ServiceResponse> GetAll(PagingRequest pagingRequest)
     {
         var adopters = await _repositoryWrapper.AdopterRepository.FindAll();
 
         return ServiceResponse.Ok(new PagedAdopterResponse
         {
-            Adopters = adopters.Skip(pageNumber * pageSize).Take(pageSize).Adapt<List<GetAdopterResponse>>(),
-            PageNumber = pageNumber,
+            Adopters = adopters.Skip(pagingRequest.PageNumber * pagingRequest.PageCount).Take(pagingRequest.PageCount).Adapt<List<GetAdopterResponse>>(),
+            PageNumber = pagingRequest.PageNumber,
             Count = adopters.Count()
         });
     }

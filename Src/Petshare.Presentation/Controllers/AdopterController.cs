@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Petshare.CrossCutting.DTO;
 using Petshare.CrossCutting.DTO.Adopter;
 using Petshare.CrossCutting.Utils;
 using Petshare.Services.Abstract;
@@ -20,9 +21,9 @@ public class AdopterController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "admin")]
-    public async Task<ActionResult<PagedAdopterResponse>> GetAll([FromQuery] int pageNumber, [FromQuery] int pageCount)
+    public async Task<ActionResult<PagedAdopterResponse>> GetAll([FromQuery] PagingRequest pagingRequest)
     {
-        var result = await _serviceWrapper.AdopterService.GetAll(pageNumber, pageCount);
+        var result = await _serviceWrapper.AdopterService.GetAll(pagingRequest);
 
         return Ok(result.Data);
     }

@@ -1,4 +1,5 @@
-﻿using Petshare.CrossCutting.DTO.Pet;
+﻿using Petshare.CrossCutting.DTO;
+using Petshare.CrossCutting.DTO.Pet;
 using Petshare.CrossCutting.Utils;
 
 namespace Petshare.Services.Abstract
@@ -13,6 +14,6 @@ namespace Petshare.Services.Abstract
 
         Task<ServiceResponse> GetById(Guid petId);
 
-        Task<ServiceResponse> GetByShelter(Guid shelterId, int pageNumber, int pageSize);
+        Task<ServiceResponse> GetByShelter(Guid shelterId, PagingRequest pagingRequest);
     }
 }

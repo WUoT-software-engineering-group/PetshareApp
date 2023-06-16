@@ -1,4 +1,5 @@
-﻿using Petshare.CrossCutting.DTO.Address;
+﻿using Petshare.CrossCutting.DTO;
+using Petshare.CrossCutting.DTO.Address;
 using Petshare.CrossCutting.DTO.Adopter;
 using Petshare.CrossCutting.Enums;
 using Petshare.CrossCutting.Utils;
@@ -30,7 +31,7 @@ public class AdopterServiceUnitTests
 
         // Act
         var pageSize = 2;
-        var result = await adopterService.GetAll(1, pageSize);
+        var result = await adopterService.GetAll(new PagingRequest { PageNumber = 1, PageCount = pageSize });
         var resultData = result.Data as PagedAdopterResponse;
 
         // Assert

@@ -1,5 +1,6 @@
 using System.Drawing.Printing;
 using System.Net;
+using Petshare.CrossCutting.DTO;
 using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.DTO.Applications;
 using Petshare.CrossCutting.Enums;
@@ -118,7 +119,7 @@ public class ApplicationsServiceUnitTests
 
         // Act
         var pageSize = 2;
-        var result = await applicationsService.GetAll("admin", adminId, 1, pageSize);
+        var result = await applicationsService.GetAll("admin", adminId,  new PagingRequest{ PageNumber = 1, PageCount = pageSize });
         var resultData = result.Data as PagedApplicationResponse;
         
         // Assert
@@ -156,7 +157,7 @@ public class ApplicationsServiceUnitTests
      
         // Act
         var pageSize = 2;
-        var result = await applicationsService.GetAll("adopter", adopterId, 1, pageSize);
+        var result = await applicationsService.GetAll("adopter", adopterId,  new PagingRequest{ PageNumber = 1, PageCount = pageSize });
         var resultData = result.Data as PagedApplicationResponse;
 
         // Assert
@@ -194,7 +195,7 @@ public class ApplicationsServiceUnitTests
 
         // Act
         var pageSize = 2;
-        var result = await applicationsService.GetAll("shelter", shelterId, 1, pageSize);
+        var result = await applicationsService.GetAll("shelter", shelterId,  new PagingRequest{ PageNumber = 1, PageCount = pageSize });
         var resultData = result.Data as PagedApplicationResponse;
 
         // Assert
@@ -217,7 +218,7 @@ public class ApplicationsServiceUnitTests
         var applicationsService = new ApplicationsService(repositoryWrapperMock.Object, serviceWrapperMock.Object);
         
         // Assert
-        await Assert.ThrowsAsync<NotImplementedException>(async () => await applicationsService.GetAll("unknown role", Guid.NewGuid(), 1, 2));
+        await Assert.ThrowsAsync<NotImplementedException>(async () => await applicationsService.GetAll("unknown role", Guid.NewGuid(), new PagingRequest { PageNumber = 1, PageCount = 2 }));
     }
 
     [Fact]
@@ -254,7 +255,7 @@ public class ApplicationsServiceUnitTests
 
         // Act
         var pageSize = 2;
-        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId, 1, pageSize);
+        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId,  new PagingRequest{ PageNumber = 1, PageCount = pageSize });
         var resultData = result.Data as PagedApplicationResponse;
         
         // Assert
@@ -282,7 +283,7 @@ public class ApplicationsServiceUnitTests
         var applicationsService = new ApplicationsService(repositoryWrapperMock.Object, serviceWrapperMock.Object);
      
         // Act
-        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId, 1, 2);
+        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId, new PagingRequest { PageNumber = 1, PageCount = 2 });
         
         // Assert
         Assert.NotNull(result);
@@ -311,7 +312,7 @@ public class ApplicationsServiceUnitTests
         var applicationsService = new ApplicationsService(repositoryWrapperMock.Object, serviceWrapperMock.Object);
      
         // Act
-        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId, 1, 2);
+        var result = await applicationsService.GetByAnnouncement(announcementId, shelterId, new PagingRequest { PageNumber = 1, PageCount = 2 });
         
         // Assert
         Assert.NotNull(result);
