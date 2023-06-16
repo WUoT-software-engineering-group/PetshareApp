@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Petshare.CrossCutting.DTO;
 using Petshare.CrossCutting.DTO.Shelter;
 using Petshare.CrossCutting.Utils;
 using Petshare.Domain.Entities;
@@ -41,14 +42,14 @@ namespace Petshare.Services
             return ServiceResponse.Ok();
         }
 
-        public async Task<ServiceResponse> GetAll(int pageNumber, int pageSize)
+        public async Task<ServiceResponse> GetAll(PagingRequest pagingRequest)
         {
             var shelters = await _repositoryWrapper.ShelterRepository.FindAll();
 
             return ServiceResponse.Ok(new PagedShelterResponse
             {
-                Shelters = shelters.Skip(pageNumber * pageSize).Take(pageSize).Adapt<List<ShelterResponse>>(),
-                PageNumber = pageNumber,
+                Shelters = shelters.Skip(pagingRequest.PageNumber * pagingRequest.PageCount).Take(pagingRequest.PageCount).Adapt<List<ShelterResponse>>(),
+                PageNumber = pagingRequest.PageNumber,
                 Count = shelters.Count()
             });
         }

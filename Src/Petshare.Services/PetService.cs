@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Petshare.CrossCutting.DTO;
 using Petshare.CrossCutting.DTO.Pet;
 using Petshare.CrossCutting.Utils;
 using Petshare.Domain.Entities;
@@ -74,15 +75,15 @@ namespace Petshare.Services
                 : ServiceResponse.NotFound();
         }
 
-        public async Task<ServiceResponse> GetByShelter(Guid shelterId, int pageNumber, int pageSize)
+        public async Task<ServiceResponse> GetByShelter(Guid shelterId, PagingRequest pagingRequest)
         {
             var petsByShelter = await _repositoryWrapper.PetRepository
                 .FindByCondition(x => x.Shelter.ID == shelterId);
 
             return ServiceResponse.Ok(new PagedPetResponse
             {
-                Pets = petsByShelter.Skip(pageNumber * pageSize).Take(pageSize).ToList().Adapt<List<PetResponse>>(),
-                PageNumber = pageNumber,
+                Pets = petsByShelter.Skip(pagingRequest.PageNumber * pagingRequest.PageCount).Take(pagingRequest.PageCount).ToList().Adapt<List<PetResponse>>(),
+                PageNumber = pagingRequest.PageNumber,
                 Count = petsByShelter.Count()
             });
         }

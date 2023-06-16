@@ -8,6 +8,7 @@ using System.Data;
 using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.Utils;
 using Petshare.CrossCutting.DTO.Shelter;
+using Petshare.CrossCutting.DTO;
 
 namespace Petshare.Services;
 
@@ -44,7 +45,7 @@ public class ApplicationsService : IApplicationsService
         return ServiceResponse.Created(application.ID);
     }
 
-    public async Task<ServiceResponse> GetAll(string role, Guid userId, int pageNumber, int pageSize)
+    public async Task<ServiceResponse> GetAll(string role, Guid userId, PagingRequest pagingRequest)
     {
         var applications = role switch
         {
@@ -56,13 +57,13 @@ public class ApplicationsService : IApplicationsService
 
         return ServiceResponse.Ok(new PagedApplicationResponse
         {
-            Applications = applications.Skip(pageNumber * pageSize).Take(pageSize).Adapt<List<ApplicationResponse>>(),
-            PageNumber = pageNumber,
+            Applications = applications.Skip(pagingRequest.PageNumber * pagingRequest.PageCount).Take(pagingRequest.PageCount).Adapt<List<ApplicationResponse>>(),
+            PageNumber = pagingRequest.PageNumber,
             Count = applications.Count()
         });
     }
 
-    public async Task<ServiceResponse> GetByAnnouncement(Guid announcementId, Guid shelterId, int pageNumber, int pageSize)
+    public async Task<ServiceResponse> GetByAnnouncement(Guid announcementId, Guid shelterId, PagingRequest pagingRequest)
     {
         var result = await _serviceWrapper.AnnouncementService.GetById(announcementId);
 
@@ -75,8 +76,8 @@ public class ApplicationsService : IApplicationsService
 
         return ServiceResponse.Ok(new PagedApplicationResponse
         {
-            Applications = applications.Skip(pageNumber * pageSize).Take(pageSize).Adapt<List<ApplicationResponse>>(),
-            PageNumber = pageNumber,
+            Applications = applications.Skip(pagingRequest.PageNumber * pagingRequest.PageCount).Take(pagingRequest.PageCount).Adapt<List<ApplicationResponse>>(),
+            PageNumber = pagingRequest.PageNumber,
             Count = applications.Count()
         });
     }

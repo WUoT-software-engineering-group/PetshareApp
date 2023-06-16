@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Petshare.CrossCutting.DTO;
 using Petshare.CrossCutting.DTO.Applications;
 using Petshare.CrossCutting.Enums;
 using Petshare.CrossCutting.Utils;
@@ -37,7 +38,7 @@ public class ApplicationsController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<PagedApplicationResponse>> GetAll([FromQuery] int pageNumber, [FromQuery] int pageCount)
+    public async Task<ActionResult<PagedApplicationResponse>> GetAll([FromQuery] PagingRequest pagingRequest)
     {
         var identity = HttpContext.User.Identity as ClaimsIdentity;
         var role = identity?.GetRole();
@@ -48,14 +49,14 @@ public class ApplicationsController : ControllerBase
             return Unauthorized();
         }
 
-        var result = await _serviceWrapper.ApplicationsService.GetAll(role, (Guid)userId, pageNumber, pageCount);
+        var result = await _serviceWrapper.ApplicationsService.GetAll(role, (Guid)userId, pagingRequest);
 
         return Ok(result.Data);
     }
 
     [HttpGet("{announcementId}")]
     [Authorize(Roles = "shelter")]
-    public async Task<ActionResult<PagedApplicationResponse>> GetByAnnouncement(Guid announcementId, [FromQuery] int pageNumber, [FromQuery] int pageCount)
+    public async Task<ActionResult<PagedApplicationResponse>> GetByAnnouncement(Guid announcementId, [FromQuery] PagingRequest pagingRequest)
     {
         var identity = HttpContext.User.Identity as ClaimsIdentity;
         var shelterId = identity?.GetId();
@@ -65,7 +66,7 @@ public class ApplicationsController : ControllerBase
             return Unauthorized();
         }
 
-        var result = await _serviceWrapper.ApplicationsService.GetByAnnouncement(announcementId, (Guid)shelterId, pageNumber, pageCount);
+        var result = await _serviceWrapper.ApplicationsService.GetByAnnouncement(announcementId, (Guid)shelterId, pagingRequest);
 
         if (result.StatusCode.BadRequest())
         {

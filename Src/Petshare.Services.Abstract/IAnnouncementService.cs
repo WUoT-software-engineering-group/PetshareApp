@@ -1,4 +1,5 @@
-﻿using Petshare.CrossCutting.DTO.Announcement;
+﻿using Petshare.CrossCutting.DTO;
+using Petshare.CrossCutting.DTO.Announcement;
 using Petshare.CrossCutting.Utils;
 
 namespace Petshare.Services.Abstract;
@@ -11,7 +12,7 @@ public interface IAnnouncementService
 
     Task<ServiceResponse> GetById(Guid announcementId);
 
-    Task<ServiceResponse> GetByShelter(Guid shelterId, int pageNumber, int pageSize);
+    Task<ServiceResponse> GetByShelter(Guid shelterId, PagingRequest pagingRequest);
 
     Task<ServiceResponse> GetByFilters(GetAnnouncementsRequest filters, Guid? adopterId);
 

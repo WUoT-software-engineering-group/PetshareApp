@@ -1,4 +1,5 @@
-﻿using Petshare.CrossCutting.DTO.Pet;
+﻿using Petshare.CrossCutting.DTO;
+using Petshare.CrossCutting.DTO.Pet;
 using Petshare.CrossCutting.Utils;
 using Petshare.Domain.Entities;
 using Petshare.Domain.Repositories.Abstract;
@@ -144,7 +145,7 @@ namespace Petshare.Services.UnitTests
 
             // Act
             var pageSize = 2;
-            var result = await petService.GetByShelter(shelterId, 1, pageSize);
+            var result = await petService.GetByShelter(shelterId, new PagingRequest{ PageNumber = 1, PageCount = pageSize });
             var resultData = result.Data as PagedPetResponse;
         
             // Assert

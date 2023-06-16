@@ -6,6 +6,7 @@ using Petshare.Domain.Repositories.Abstract;
 using Petshare.Services.Abstract;
 using Petshare.CrossCutting.Utils;
 using System.Linq.Expressions;
+using Petshare.CrossCutting.DTO;
 
 namespace Petshare.Services;
 
@@ -66,14 +67,14 @@ public class AnnouncementService : IAnnouncementService
         return ServiceResponse.Ok(announcement.Adapt<AnnouncementResponse>());
     }
 
-    public async Task<ServiceResponse> GetByShelter(Guid shelterId, int pageNumber, int pageSize)
+    public async Task<ServiceResponse> GetByShelter(Guid shelterId, PagingRequest pagingRequest)
     {
         var announcements = await _repositoryWrapper.AnnouncementRepository.FindByCondition(x => x.Pet.Shelter.ID == shelterId);
         var pagedResult = new PagedAnnouncementResponse
         {
-            Announcements = announcements.Skip(pageSize * pageNumber).Take(pageSize).Adapt<List<LikedAnnouncementResponse>>(),
+            Announcements = announcements.Skip(pagingRequest.PageNumber * pagingRequest.PageCount).Take(pagingRequest.PageCount).Adapt<List<LikedAnnouncementResponse>>(),
             Count = announcements.Count(),
-            PageNumber = pageNumber
+            PageNumber = pagingRequest.PageNumber
         };
         return ServiceResponse.Ok(pagedResult);
     }
