@@ -4,6 +4,5 @@ public enum AnnouncementStatus
 {
     Open,
     Closed,
-    DuringVerification,
     Deleted
 }
